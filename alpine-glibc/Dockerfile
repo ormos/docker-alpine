@@ -6,14 +6,15 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 
 ENV LANG=C.UTF-8
 
-RUN apk upgrade --update && \
-    ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download" && \
+RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases/download" && \
     ALPINE_GLIBC_PACKAGE_VERSION="2.23-r3" && \
     ALPINE_GLIBC_BASE_PACKAGE_FILENAME="glibc-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_BIN_PACKAGE_FILENAME="glibc-bin-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_PACKAGE_KEY="sgerrand.rsa.pub" && \
-    apk add --no-cache --virtual=.build-dependencies curl ca-certificates && \
+    apk upgrade --update && \
+    apk add --no-cache ca-certificates && \
+    apk add --no-cache --virtual=.build-dependencies curl && \
     echo "Downloading GLIBC package key: $ALPINE_GLIBC_PACKAGE_KEY" >&2 && \
     curl -jkSL -o "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_PACKAGE_KEY" && \
@@ -35,12 +36,11 @@ RUN apk upgrade --update && \
     echo "export LANG=$LANG" > /etc/profile.d/locale.sh && \
     \
     apk del glibc-i18n && \
-    apk del .build-dependencies && \
     rm \
         "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" \
         "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" && \
+    \
+    apk del .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
-
-#    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib && \

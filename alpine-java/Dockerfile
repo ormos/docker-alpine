@@ -4,34 +4,40 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 
 # Java Version and other ENV
 ENV JAVA_VERSION_MAJOR=8 \
-    JAVA_VERSION_MINOR=92 \
+    JAVA_VERSION_MINOR=102 \
     JAVA_VERSION_BUILD=14 \
     JAVA_PACKAGE=jdk \
     JAVA_JCE=unlimited \
     JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN apk upgrade --update && \
-    apk add --no-cache --virtual=.build-dependencies libstdc++ curl bash ca-certificates && \
+    apk add --no-cache ca-certificates && \
+    apk add --no-cache --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
+    \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
     JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz" && \
     echo "Downloading Java package archive: $JAVA_PACKAGE_FILENAME" >&2 && \
     curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
       http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_PACKAGE_FILENAME} | \
-      tar xz -C "${JAVA_DIR}"  && \
+      bsdtar -xf- -C "${JAVA_DIR}"  && \
     ln -s "${JAVA_DIR}/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR}" "${JAVA_HOME}" && \
+    \
     if [ "${JAVA_JCE}" == "unlimited" ]; then \
       echo "Installing Unlimited JCE policy" >&2 && \
       JAVA_JCE_FILENAME="jce_policy-${JAVA_VERSION_MAJOR}.zip" && \
       echo "Downloading Java JCE policy archive: $JAVA_JCE_FILENAME" >&2 && \
-      curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" -o /tmp/${JAVA_JCE_FILENAME} \
-        http://download.oracle.com/otn-pub/java/jce/${JAVA_VERSION_MAJOR}/${JAVA_JCE_FILENAME} && \
-      cd /tmp && unzip -q /tmp/${JAVA_JCE_FILENAME} && \
-      cp /tmp/UnlimitedJCEPolicyJDK8/*.jar "${JAVA_HOME}/jre/lib/security" ; \
+      curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
+        http://download.oracle.com/otn-pub/java/jce/${JAVA_VERSION_MAJOR}/${JAVA_JCE_FILENAME} | \
+        bsdtar -xf- -C "/tmp" && \
+      cp /tmp/UnlimitedJCEPolicyJDK8/*.jar "${JAVA_HOME}/jre/lib/security" && \
+      rm -rf /tmp/UnlimitedJCEPolicyJDK8; \
     fi && \
+    \
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
     sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=30/ "${JAVA_HOME}/jre/lib/security/java.security" && \
     ln -s "${JAVA_HOME}/bin/"* "/usr/bin/" || true && \
-    apk del .build-dependencies && \
+    \
     rm -rf ${JAVA_HOME}/*src.zip \
            ${JAVA_HOME}/lib/missioncontrol \
            ${JAVA_HOME}/lib/visualvm \
@@ -64,5 +70,6 @@ RUN apk upgrade --update && \
            ${JAVA_HOME}/jre/lib/ext/nashorn.jar \
            ${JAVA_HOME}/jre/lib/oblique-fonts \
            ${JAVA_HOME}/jre/lib/plugin.jar && \
-    rm -rf /tmp/* /var/cache/apk/* && \
-    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+    \
+    apk del .build-dependencies && \
+    rm -rf /tmp/* /var/cache/apk/*
