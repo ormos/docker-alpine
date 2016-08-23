@@ -47,6 +47,10 @@ RUN NGINX_VERSION="1.11.3" && \
     OPENRESTY_DNS_MODULE_VERSION="master" && \
     OPENRESTY_DNS_MODULE_FOLDER="${OPENRESTY_DNS_MODULE}-${OPENRESTY_DNS_MODULE_VERSION}" && \
     OPENRESTY_DNS_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_DNS_MODULE}/archive/${OPENRESTY_DNS_MODULE_VERSION}.zip" && \
+    OPENRESTY_JSON_MODULE="lua-cjson" && \
+    OPENRESTY_JSON_MODULE_VERSION="master" && \
+    OPENRESTY_JSON_MODULE_FOLDER="${OPENRESTY_JSON_MODULE}-${OPENRESTY_JSON_MODULE_VERSION}" && \
+    OPENRESTY_JSON_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_JSON_MODULE}/archive/${OPENRESTY_JSON_MODULE_VERSION}.zip" && \
     \
     apk upgrade --update && \
     apk --no-cache add ca-certificates openssl pcre zlib && \
@@ -151,6 +155,12 @@ RUN NGINX_VERSION="1.11.3" && \
     cd "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
+    \
+    echo "Downloading and installing nginx LUA package: $OPENRESTY_JSON_MODULE" >&2 && \
+    curl -kSL "${OPENRESTY_JSON_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    cd "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \
+      make install PREFIX=/usr LUA_INCLUDE_DIR="${LUAJIT_INC}" && \
+    cd /tmp && rm -rf "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \
     \
     apk del .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
