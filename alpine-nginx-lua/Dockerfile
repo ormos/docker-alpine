@@ -2,6 +2,7 @@ FROM elvido/alpine-glibc
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
+ENV DEPLOYMENT_FOLDER="/var/nginx"
 ENV LUA_VERSION="5.1"
 
 RUN NGINX_VERSION="1.11.3" && \
@@ -88,18 +89,18 @@ RUN NGINX_VERSION="1.11.3" && \
       ./configure \
         --prefix=/etc/nginx \
         --sbin-path=/usr/sbin/nginx \
-        --conf-path=/etc/nginx/nginx.conf \
-        --error-log-path=/var/log/nginx/error.log \
-        --http-log-path=/var/log/nginx/access.log \
-        --pid-path=/var/run/nginx.pid \
-        --lock-path=/var/run/nginx.lock \
-        --http-client-body-temp-path=/var/cache/nginx/client_temp \
-        --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
-        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-        --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-        --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+        --conf-path="${DEPLOYMENT_FOLDER}/config/nginx.conf" \
+        --error-log-path="${DEPLOYMENT_FOLDER}/log/error.log" \
+        --http-log-path="${DEPLOYMENT_FOLDER}/log/access.log" \
+        --pid-path="${DEPLOYMENT_FOLDER}/run/nginx.pid" \
+        --lock-path="${DEPLOYMENT_FOLDER}/run/nginx.lock" \
+        --http-client-body-temp-path="${DEPLOYMENT_FOLDER}/cache/client_temp" \
+        --http-proxy-temp-path="${DEPLOYMENT_FOLDER}/cache/proxy_temp" \
         --user=nginx \
         --group=nginx \
+        --without-http_fastcgi_module\
+        --without-http_uwsgi_module\
+        --without-http_scgi_module\
   	    --with-http_ssl_module \
   	    --with-http_realip_module \
   	    --with-http_addition_module \
@@ -117,17 +118,21 @@ RUN NGINX_VERSION="1.11.3" && \
   	    --with-stream \
   	    --with-stream_ssl_module \
   	    --with-http_slice_module \
-  	    --with-mail \
-  	    --with-mail_ssl_module \
   	    --with-file-aio \
   	    --with-http_v2_module \
   	    --with-ipv6 \
   	    --with-pcre-jit \
+        --with-mail=dynamic \
+        --with-mail_ssl_module \
         --with-http_geoip_module=dynamic \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_ECHO_MODULE_FOLDER}" \
       && \
+      mkdir -p "${DEPLOYMENT_FOLDER}/run/"    && \
+      mkdir -p "${DEPLOYMENT_FOLDER}/log/"    && \
+      mkdir -p "${DEPLOYMENT_FOLDER}/cache/"  && \
+      mkdir -p "${DEPLOYMENT_FOLDER}/config/" && \
       make install && \
     cd /tmp && rm -rf \
       "/tmp/${NGINX_PACKAGE_FOLDER}" \
@@ -135,7 +140,9 @@ RUN NGINX_VERSION="1.11.3" && \
       "/tmp/${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}" \
     && \
-    sed -i -e 's/#access_log  logs\/access.log  main;/access_log \/dev\/stdout;/' -e 's/#error_log  logs\/error.log  notice;/error_log stderr notice;/' /etc/nginx/nginx.conf && \
+    mv /etc/nginx/html "${DEPLOYMENT_FOLDER}" && \
+    sed -i -e "s#root[[:blank:]]\+html;#root ${DEPLOYMENT_FOLDER}/html;#g" "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
+    sed -i -e 's/#access_log[[:blank:]]\+logs\/access.log[[:blank:]]\+main;/access_log \/dev\/stdout;/' -e 's/#error_log[[:blank:]]\+logs\/error.log[[:blank:]]\+notice;/error_log \/dev\/stderr notice;/' "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
     adduser -D nginx && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_CORE_MODULE" >&2 && \
@@ -165,7 +172,16 @@ RUN NGINX_VERSION="1.11.3" && \
     apk del .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
-    VOLUME ["/var/cache/nginx", "/etc/nginx/html"]
+    WORKDIR ${DEPLOYMENT_FOLDER}/
+
+    ONBUILD RUN rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
+                       ${DEPLOYMENT_FOLDER}/log/*    \
+                       ${DEPLOYMENT_FOLDER}/cache/*  \
+                       ${DEPLOYMENT_FOLDER}/config/* \
+                       ${DEPLOYMENT_FOLDER}/html/*
+    ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
+
+    VOLUME ["/var/nginx"]
 
     EXPOSE 80 443
     CMD ["nginx", "-g", "daemon off;"]
