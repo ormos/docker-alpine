@@ -2,4 +2,4 @@ FROM scratch
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-ADD rootfs.tar.gz /
+ADD rootfs.tgz /

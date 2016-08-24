@@ -8,7 +8,7 @@ The builder takes several options:
 
 * `-r <release>`: The release tag to use (such as `edge` or `v3.1`).
 * `-m <mirror>`: The mirror URL base. Defaults to `http://nl.alpinelinux.org/alpine`.
-* `-s`: Outputs the `rootfs.tar.gz` to stdout.
+* `-s`: Outputs the `rootfs.gz` to stdout.
 * `-c`: Adds the `apk-install` script to the resulting rootfs.
 * `-e`: Adds extra `edge/main` and `edge/testing` pins to the repositories file.
 * `-d`: Disables su to root by removing the blank root password.

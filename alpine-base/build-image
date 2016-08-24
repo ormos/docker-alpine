@@ -15,7 +15,7 @@ build() {
 		version_dir="$(dirname "$file")"
 		: "${TAGS:?}" "${BUILD_OPTIONS:?}" "${RELEASE:?}"
 		docker run -e "TRACE=$TRACE" --rm "$BUILDER_IMAGE" "${BUILD_OPTIONS[@]}" \
-			> "$version_dir/rootfs.tar.gz"
+			> "$version_dir/rootfs.tgz"
 
 		for tag in "${TAGS[@]}"; do
 			docker build -t "$tag" "$version_dir"
@@ -24,7 +24,7 @@ build() {
 }
 
 commit() {
-	declare rootfs_files="versions/**/rootfs.tar.gz"
+	declare rootfs_files="versions/**/rootfs.tgz"
 	local current_branch
 	current_branch=$(git rev-parse --abbrev-ref HEAD)
 	: "${current_branch:?}"
@@ -62,8 +62,8 @@ main() {
 	set -eo pipefail; [[ "$TRACE" ]] && set -x
 	declare cmd="$1"
 	case "$cmd" in
-		commit)	shift;	commit "$@";;
-		push)	shift;	push "$@";;
+		commit)	shift; commit "$@";;
+		push)	shift; push "$@";;
 		*)		build "$@";;
 	esac
 }

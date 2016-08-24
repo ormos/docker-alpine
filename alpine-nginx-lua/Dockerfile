@@ -59,7 +59,7 @@ RUN NGINX_VERSION="1.11.3" && \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
     curl -kSL "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
-      make && \
+      make PREFIX=/usr && \
       make install PREFIX=/usr && \
       ln -sf /usr/bin/luajit-${LUAJIT_PACKAGE_VERSION} /usr/bin/luajit || true && \
       export LUAJIT_LIB="/usr/lib" && \
