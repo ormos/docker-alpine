@@ -2,6 +2,8 @@ FROM elvido/alpine-glibc
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
+LABEL "net.elvido.alpine-java"="3.4"
+
 # Java Version and other ENV
 ENV JAVA_VERSION_MAJOR=8 \
     JAVA_VERSION_MINOR=102 \

@@ -2,6 +2,8 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
+LABEL "net.elvido.alpine-glibc"="3.4"
+
 # Install GNU libc (aka glibc) and set C.UTF-8 locale as default.
 
 ENV LANG=C.UTF-8

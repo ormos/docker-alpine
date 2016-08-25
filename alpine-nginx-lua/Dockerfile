@@ -2,8 +2,13 @@ FROM elvido/alpine-glibc
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-ENV DEPLOYMENT_FOLDER="/var/nginx"
-ENV LUA_VERSION="5.1"
+LABEL "net.elvido.alpine-nginx-lua"="3.4"
+
+ENV DEPLOYMENT_FOLDER="/var/nginx" \
+    LUA_VERSION="5.1" \
+    LUA_JIT="2.1" \
+    LUA_INC="/usr/include/luajit-2.1" \
+    LUA_LIB="/usr/lib"
 
 RUN NGINX_VERSION="1.11.3" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
@@ -36,6 +41,10 @@ RUN NGINX_VERSION="1.11.3" && \
     OPENRESTY_ECHO_MODULE_VERSION="master" && \
     OPENRESTY_ECHO_MODULE_FOLDER="${OPENRESTY_ECHO_MODULE}-${OPENRESTY_ECHO_MODULE_VERSION}" && \
     OPENRESTY_ECHO_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_ECHO_MODULE}/archive/${OPENRESTY_ECHO_MODULE_VERSION}.zip" && \
+    OPENRESTY_HEADER_MODULE="headers-more-nginx-module" && \
+    OPENRESTY_HEADER_MODULE_VERSION="master" && \
+    OPENRESTY_HEADER_MODULE_FOLDER="${OPENRESTY_HEADER_MODULE}-${OPENRESTY_HEADER_MODULE_VERSION}" && \
+    OPENRESTY_HEADER_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_HEADER_MODULE}/archive/${OPENRESTY_HEADER_MODULE_VERSION}.zip" && \
     OPENRESTY_CORE_MODULE="lua-resty-core" && \
     OPENRESTY_CORE_MODULE_VERSION="master" && \
     OPENRESTY_CORE_MODULE_FOLDER="${OPENRESTY_CORE_MODULE}-${OPENRESTY_CORE_MODULE_VERSION}" && \
@@ -63,8 +72,8 @@ RUN NGINX_VERSION="1.11.3" && \
       make PREFIX=/usr && \
       make install PREFIX=/usr && \
       ln -sf /usr/bin/luajit-${LUAJIT_PACKAGE_VERSION} /usr/bin/luajit || true && \
-      export LUAJIT_LIB="/usr/lib" && \
-      export LUAJIT_INC="/usr/include/luajit-${LUAJIT_VERSION}" && \
+      export LUAJIT_LIB="${LUA_LIB}" && \
+      export LUAJIT_INC="${LUA_INC}" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
     \
     echo "Downloading and building GeoIP package: $GEOIP_PACKAGE_FILENAME" >&2 && \
@@ -85,6 +94,7 @@ RUN NGINX_VERSION="1.11.3" && \
     curl -kSL "${OPENRESTY_LUA_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     curl -kSL "${OPENRESTY_UPSTREAM_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     curl -kSL "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${NGINX_PACKAGE_FOLDER}" && \
       ./configure \
         --prefix=/etc/nginx \
@@ -98,9 +108,10 @@ RUN NGINX_VERSION="1.11.3" && \
         --http-proxy-temp-path="${DEPLOYMENT_FOLDER}/cache/proxy_temp" \
         --user=nginx \
         --group=nginx \
-        --without-http_fastcgi_module\
-        --without-http_uwsgi_module\
-        --without-http_scgi_module\
+        --without-http_userid_module \
+        --without-http_fastcgi_module \
+        --without-http_uwsgi_module \
+        --without-http_scgi_module \
   	    --with-http_ssl_module \
   	    --with-http_realip_module \
   	    --with-http_addition_module \
@@ -128,6 +139,7 @@ RUN NGINX_VERSION="1.11.3" && \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_ECHO_MODULE_FOLDER}" \
+        --add-dynamic-module="../${OPENRESTY_HEADER_MODULE_FOLDER}" \
       && \
       mkdir -p "${DEPLOYMENT_FOLDER}/run/"    && \
       mkdir -p "${DEPLOYMENT_FOLDER}/log/"    && \
@@ -139,6 +151,12 @@ RUN NGINX_VERSION="1.11.3" && \
       "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}" \
+      "/tmp/${OPENRESTY_HEADER_MODULE_FOLDER}" \
+    && \
+    rm -f "${DEPLOYMENT_FOLDER}/config/"fastcgi* \
+          "${DEPLOYMENT_FOLDER}/config/"scgi* \
+          "${DEPLOYMENT_FOLDER}/config/"uwsgi* \
+          "${DEPLOYMENT_FOLDER}/config/"*.default \
     && \
     mv /etc/nginx/html "${DEPLOYMENT_FOLDER}" && \
     sed -i -e "s#root[[:blank:]]\+html;#root ${DEPLOYMENT_FOLDER}/html;#g" "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
@@ -172,16 +190,23 @@ RUN NGINX_VERSION="1.11.3" && \
     apk del .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
-    WORKDIR ${DEPLOYMENT_FOLDER}/
+ADD files/usr /usr
 
-    ONBUILD RUN rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
-                       ${DEPLOYMENT_FOLDER}/log/*    \
-                       ${DEPLOYMENT_FOLDER}/cache/*  \
-                       ${DEPLOYMENT_FOLDER}/config/* \
-                       ${DEPLOYMENT_FOLDER}/html/*
-    ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
+ONBUILD RUN rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
+                   ${DEPLOYMENT_FOLDER}/log/*    \
+                   ${DEPLOYMENT_FOLDER}/cache/*  \
+                   ${DEPLOYMENT_FOLDER}/config/*.conf \
+                   ${DEPLOYMENT_FOLDER}/html
+ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
 
-    VOLUME ["/var/nginx"]
+ONBUILD RUN [ ! -e "${DEPLOYMENT_FOLDER}/lua/luarocks.install" ] || \
+            ( luarocks-installer $(cat "${DEPLOYMENT_FOLDER}/lua/luarocks.install") && \
+              rm -f "${DEPLOYMENT_FOLDER}/lua/luarocks.install" )
 
-    EXPOSE 80 443
-    CMD ["nginx", "-g", "daemon off;"]
+VOLUME ["${DEPLOYMENT_FOLDER}"]
+
+EXPOSE 80 443
+
+WORKDIR ${DEPLOYMENT_FOLDER}/
+
+CMD ["nginx", "-g", "daemon off;"]

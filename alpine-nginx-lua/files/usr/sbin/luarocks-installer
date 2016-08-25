@@ -1,0 +1,59 @@
+#!/usr/bin/env sh
+
+
+LUAROCKS_VERSION="2.3.0"
+LUAROCKS_BASE_URL="http://luarocks.org/releases"
+LUAROCKS_PACKAGE_FILENAME="luarocks-${LUAROCKS_VERSION}.tar.gz"
+LUAROCKS_PACKAGE_FOLDER="luarocks-${LUAROCKS_VERSION}"
+LUAROCKS_PACKAGE_URL="${LUAROCKS_BASE_URL}/${LUAROCKS_PACKAGE_FILENAME}"
+
+set -eo pipefail; [[ "$TRACE" ]] && set -x
+
+[[ "$(id -u)" -eq 0 ]] || {
+	printf >&2 '%s requires root\n' "$0" && exit 1
+}
+
+usage() {
+	printf >&2 '%s: [packages]\n' "$0" && exit 1
+}
+
+prepare() {
+	printf >&2 'Installing required system packages...\n'
+    apk --no-cache add --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev unzip
+
+    printf >&2 'Downloading and building LuaRocks package: %s' "${LUAROCKS_PACKAGE_FILENAME}\n"
+    curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "/tmp"
+    cd "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+    ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
+                --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"
+    make bootstrap
+    cd /tmp && rm -rf "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+}
+
+cleanup() {
+	printf >&2 'Cleanup temporary files and packages...\n'
+	rm -rf "/usr/luarocks" \
+           "/usr/lib/luarocks" \
+           "/usr/bin/luarocks" \
+           "/usr/share/lua/${LUA_VERSION}/luarocks" \
+           "/root/.cache" &>/dev/null
+    apk del .build-dependencies &>/dev/null
+    rm -rf /tmp/* /var/cache/apk/* &>/dev/null
+}
+
+install() {
+	for MODULE in "$@"; do
+		luarocks install "${MODULE}"
+  	done
+}
+
+main() {
+
+	[ "$#" -ge 1 ] || usage
+
+	prepare
+	install "$@"
+	cleanup
+}
+
+main "$@"
