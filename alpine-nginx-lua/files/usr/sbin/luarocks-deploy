@@ -1,0 +1,112 @@
+#!/usr/bin/env sh
+
+
+LUAROCKS_VERSION="2.3.0"
+LUAROCKS_BASE_URL="http://luarocks.org/releases"
+LUAROCKS_PACKAGE_FILENAME="luarocks-${LUAROCKS_VERSION}.tar.gz"
+LUAROCKS_PACKAGE_FOLDER="luarocks-${LUAROCKS_VERSION}"
+LUAROCKS_PACKAGE_URL="${LUAROCKS_BASE_URL}/${LUAROCKS_PACKAGE_FILENAME}"
+
+
+usage() {
+	printf >&2 '%s: [-C folder] prepare|cleanup|install|add|export [packages]\n' "$0" && exit 1
+}
+
+
+prepare_luarocks() {
+	printf >&2 'Installing required system packages...\n'
+  apk --no-cache add --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev zip unzip
+
+  printf >&2 'Downloading and building LuaRocks package: %s' "${LUAROCKS_PACKAGE_FILENAME}\n"
+  curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "/tmp"
+  cd "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+  ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
+              --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"
+  make bootstrap
+  cd /tmp && rm -rf "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+}
+
+cleanup_luarocks() {
+
+  if [ "$RELOCATE" ] && command -v luarocks >/dev/null ; then
+    ( mkdir -p /tmp/luarocks-deploy ; cd /tmp/luarocks-deploy
+      pack_rocks
+      luarocks purge --tree=system
+      find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | xargs -0 -n1 -I{} bsdtar -xf {} --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' --strip-components 1 -C "${LUA_LIB}/lua/${LUA_VERSION}"
+      find "${LUA_LIB}/lua/${LUA_VERSION}" -name '*~' -delete
+      cd .. ; rm  -rf /tmp/luarocks-deploy
+    )
+  fi
+
+	printf >&2 'Cleanup temporary files and packages...\n'
+	rm -rf "/usr/luarocks" \
+         "/usr/lib/luarocks" \
+         "/usr/bin/luarocks" \
+         "/usr/share/lua/${LUA_VERSION}/luarocks" \
+         "/root/.cache" &>/dev/null
+  apk del .build-dependencies &>/dev/null
+  rm -rf /tmp/* /var/cache/apk/* &>/dev/null
+}
+
+install_rocks() {
+	for ROCK in "$@"; do
+		luarocks install "${ROCK}"
+  done
+}
+
+pack_rocks() {
+  if [ "$#" -ge 1 ]; then
+    for ROCK in "$@"; do
+      luarocks list --porcelain "${ROCK}" | cut -f1-2 | xargs -n2 luarocks pack
+    done
+  else
+    luarocks list --porcelain | cut -f1-2 | xargs -n2 luarocks pack
+  fi
+}
+
+add_rocks() {
+  [ "$#" -ge 1 ] || return
+
+  if command -v luarocks >/dev/null ; then
+    install_rocks "$@"
+  else
+    prepare_luarocks "$@"
+    install_rocks "$@"
+    cleanup_luarocks "$@"
+  fi
+}
+
+export_rocks() {
+  [ "$FOLDER" ] && cd "$FOLDER"
+
+  if command -v luarocks >/dev/null ; then
+    pack_rocks "$@"
+  else
+    prepare_luarocks "$@"
+    pack_rocks "$@"
+    cleanup_luarocks "$@"
+  fi
+}
+
+main() {
+  set -eo pipefail; [[ "$TRACE" ]] && set -x
+
+  RELOCATE=1
+#  while getopts "C:h" opt; do
+#    case $opt in
+#      C) FOLDER="${OPTARG%/}";;
+ #     *) usage;;
+ #   esac
+ # done
+
+  case "$1" in
+    prepare) shift; prepare_luarocks "$@";;
+    cleanup) shift; cleanup_luarocks "$@";;
+    install) shift; install_rocks "$@";;
+    add)     shift; add_rocks "$@";;
+    export)  shift; export_rocks "$@";;
+    *)       usage;;
+  esac
+}
+
+main "$@"
