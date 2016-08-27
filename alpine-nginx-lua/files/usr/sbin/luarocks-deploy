@@ -55,22 +55,22 @@ prepare_luarocks() {
   ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
               --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"
   make bootstrap
-  cd .. && rm -rf "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
+  cd .. && rm -rf "${TMP_FOLDER:?}/${LUAROCKS_PACKAGE_FOLDER}"
 }
 
 cleanup_luarocks() {
   if [ "${RELOCATE}" -eq "1" ] && command -v luarocks >/dev/null ; then
     printf >&2 'Relocating installed packages...\n'
-    ( mkdir -p "${TMP_FOLDER}/luarocks-deploy" ; cd "${TMP_FOLDER}/luarocks-deploy"
-      pack_rocks &>/dev/null
-      luarocks purge --tree=system &>/dev/null
+    ( mkdir -p "${TMP_FOLDER:?}/luarocks-deploy" ; cd "${TMP_FOLDER:?}/luarocks-deploy"
+      pack_rocks >/dev/null 2>&1
+      luarocks purge --tree=system >/dev/null 2>&1l
       find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | \
         xargs -0 -n1 -I{} bsdtar -xf {} \
           --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' \
           --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' \
           --strip-components 1 -C "${LUA_LIB}/lua/${LUA_VERSION}"
       find "${LUA_LIB}/lua/${LUA_VERSION}" -name '*~' -delete
-      cd .. ; rm  -rf "${TMP_FOLDER}/luarocks-deploy"
+      cd .. ; rm  -rf "${TMP_FOLDER:?}/luarocks-deploy"
     )
   fi
 
@@ -79,9 +79,9 @@ cleanup_luarocks() {
          "/usr/lib/luarocks" \
          "/usr/bin/luarocks" \
          "/usr/share/lua/${LUA_VERSION}/luarocks" \
-         "/root/.cache" &>/dev/null
-  apk del .build-dependencies &>/dev/null
-  rm -rf "${TMP_FOLDER}/luarocks-deploy" /var/cache/apk/* &>/dev/null
+         "/root/.cache" >/dev/null 2>&1
+  apk del .build-dependencies >/dev/null 2>&1
+  rm -rf "${TMP_FOLDER:?}/luarocks-deploy" /var/cache/apk/* >/dev/null 2>&1
 }
 
 install_rocks() {
@@ -125,7 +125,7 @@ export_rocks() {
 }
 
 main() {
-  set -eo pipefail; [[ "$TRACE" ]] && set -x
+  set -eo pipefail; [ "$TRACE" ] && set -x
 
   RELOCATE=1
 
@@ -143,7 +143,7 @@ main() {
   done
 
   # make sure temp folder exists
-  [[ -d "${TMP_FOLDER}" ]] || mkdir -p "${TMP_FOLDER}"
+  [ -d "${TMP_FOLDER:?}" ] || mkdir -p "${TMP_FOLDER:?}"
 
   case "$1" in
     prepare) shift; prepare_luarocks "$@";;
@@ -154,7 +154,7 @@ main() {
     *)       _usage;;
   esac
 
-  rm -rf "${TMP_FOLDER}"
+  rm -rf "${TMP_FOLDER:?}" >/dev/null 2>&1
 }
 
 main "$@"
