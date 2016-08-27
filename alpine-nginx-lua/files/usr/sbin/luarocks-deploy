@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+VERSION='1.0.2'
+AUTHOR='Ralf Hofmann'
+CONTACT='<r.hofmann@sap.com>'
 
 LUAROCKS_VERSION="2.3.0"
 LUAROCKS_BASE_URL="http://luarocks.org/releases"
@@ -7,34 +10,67 @@ LUAROCKS_PACKAGE_FILENAME="luarocks-${LUAROCKS_VERSION}.tar.gz"
 LUAROCKS_PACKAGE_FOLDER="luarocks-${LUAROCKS_VERSION}"
 LUAROCKS_PACKAGE_URL="${LUAROCKS_BASE_URL}/${LUAROCKS_PACKAGE_FILENAME}"
 
+# the full qualified path of the script
+SCRIPT_NAME=$(basename -- "$0")
+SCRIPT_PATH=$(dirname -- "$(readlink -f "$0")")
+TMP_FOLDER="${TMPDIR:-/tmp/$(id -u)}${SCRIPT_NAME}-$$/"
 
-usage() {
-	printf >&2 '%s: [-C folder] prepare|cleanup|install|add|export [packages]\n' "$0" && exit 1
+_usage() {
+	printf >&2 'usage: %s [-h|--help] [-v|--version] [-C|--directroy <folder>] [-N|--no-relocate] prepare|cleanup|install|add|export <packages>\n' "${SCRIPT_NAME}" && exit 1
 }
 
+_version() {
+  printf  "%s Version %s by %s %s\n" "${SCRIPT_NAME}" "${VERSION}" "${AUTHOR}" "${CONTACT}"
+}
+
+_help() {
+cat <<- -EOF-
+
+  ${SCRIPT_NAME} Version ${VERSION}
+  by ${AUTHOR} ${CONTACT}
+
+  Simple script to automate the deployment of luarocks packages
+
+  ${SCRIPT_NAME} [-h|--help] [-v|--version] [-C|--directroy <folder>] [-N|--no-relocate] prepare|cleanup|install|add|export <packages>
+
+    <packages>  the packages to install
+
+  Options:
+
+    -h, --help                Display this help message and exit.
+    -v, --version             Display version and exit.
+    -N, --no-relocate         Suprress relocating the deployed files.
+    -C, --directory <folder>  Change to directory <folder>
+
+-EOF-
+}
 
 prepare_luarocks() {
 	printf >&2 'Installing required system packages...\n'
   apk --no-cache add --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev zip unzip
 
   printf >&2 'Downloading and building LuaRocks package: %s' "${LUAROCKS_PACKAGE_FILENAME}\n"
-  curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "/tmp"
-  cd "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+  curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
+  cd "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
   ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
               --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"
   make bootstrap
-  cd /tmp && rm -rf "/tmp/${LUAROCKS_PACKAGE_FOLDER}"
+  cd .. && rm -rf "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
 }
 
 cleanup_luarocks() {
-
-  if [ "$RELOCATE" ] && command -v luarocks >/dev/null ; then
-    ( mkdir -p /tmp/luarocks-deploy ; cd /tmp/luarocks-deploy
-      pack_rocks
-      luarocks purge --tree=system
-      find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | xargs -0 -n1 -I{} bsdtar -xf {} --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' --strip-components 1 -C "${LUA_LIB}/lua/${LUA_VERSION}"
+  if [ "${RELOCATE}" -eq "1" ] && command -v luarocks >/dev/null ; then
+    printf >&2 'Relocating installed packages...\n'
+    ( mkdir -p "${TMP_FOLDER}/luarocks-deploy" ; cd "${TMP_FOLDER}/luarocks-deploy"
+      pack_rocks &>/dev/null
+      luarocks purge --tree=system &>/dev/null
+      find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | \
+        xargs -0 -n1 -I{} bsdtar -xf {} \
+          --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' \
+          --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' \
+          --strip-components 1 -C "${LUA_LIB}/lua/${LUA_VERSION}"
       find "${LUA_LIB}/lua/${LUA_VERSION}" -name '*~' -delete
-      cd .. ; rm  -rf /tmp/luarocks-deploy
+      cd .. ; rm  -rf "${TMP_FOLDER}/luarocks-deploy"
     )
   fi
 
@@ -45,7 +81,7 @@ cleanup_luarocks() {
          "/usr/share/lua/${LUA_VERSION}/luarocks" \
          "/root/.cache" &>/dev/null
   apk del .build-dependencies &>/dev/null
-  rm -rf /tmp/* /var/cache/apk/* &>/dev/null
+  rm -rf "${TMP_FOLDER}/luarocks-deploy" /var/cache/apk/* &>/dev/null
 }
 
 install_rocks() {
@@ -92,12 +128,22 @@ main() {
   set -eo pipefail; [[ "$TRACE" ]] && set -x
 
   RELOCATE=1
-#  while getopts "C:h" opt; do
-#    case $opt in
-#      C) FOLDER="${OPTARG%/}";;
- #     *) usage;;
- #   esac
- # done
+
+  OPTSTR=$(getopt -o NC:hv --long no-relocate,directory:,help,version -n "${SCRIPT_NAME}" -- "$@") || _usage
+  eval set -- "$OPTSTR"
+  while true ; do
+    case "$1" in
+      '-N'|'--no-relocate')  RELOCATE=0 ; shift ;;
+      '-C'|'--directory')    FOLDER="$2" ; shift 2 ;;
+      '-h'|'--help')        _help    ; exit ;;
+      '-v'|'--version')     _version ; exit ;;
+      '--')                 shift ; break ;;
+      *)                    _usage;;
+    esac
+  done
+
+  # make sure temp folder exists
+  [[ -d "${TMP_FOLDER}" ]] || mkdir -p "${TMP_FOLDER}"
 
   case "$1" in
     prepare) shift; prepare_luarocks "$@";;
@@ -105,8 +151,10 @@ main() {
     install) shift; install_rocks "$@";;
     add)     shift; add_rocks "$@";;
     export)  shift; export_rocks "$@";;
-    *)       usage;;
+    *)       _usage;;
   esac
+
+  rm -rf "${TMP_FOLDER}"
 }
 
 main "$@"
