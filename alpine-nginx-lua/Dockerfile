@@ -199,10 +199,6 @@ ONBUILD RUN rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
                    ${DEPLOYMENT_FOLDER}/html
 ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
 
-ONBUILD RUN [ ! -e "${DEPLOYMENT_FOLDER}/lua/luarocks.install" ] || \
-            ( luarocks-installer $(cat "${DEPLOYMENT_FOLDER}/lua/luarocks.install") && \
-              rm -f "${DEPLOYMENT_FOLDER}/lua/luarocks.install" )
-
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 
 EXPOSE 80 443
