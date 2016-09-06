@@ -13,8 +13,8 @@ ENV JAVA_VERSION_MAJOR=8 \
     JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN apk upgrade --update && \
-    apk add --no-cache ca-certificates && \
-    apk add --no-cache --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
+    apk add --no-cache --quiet ca-certificates && \
+    apk add --no-cache --quiet --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
@@ -73,5 +73,6 @@ RUN apk upgrade --update && \
            ${JAVA_HOME}/jre/lib/oblique-fonts \
            ${JAVA_HOME}/jre/lib/plugin.jar && \
     \
-    apk del .build-dependencies && \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*

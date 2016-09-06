@@ -16,8 +16,8 @@ RUN ORIENTDB_VERSION="2.2.8" && \
     ORIENTDB_PACKAGE_URL="${ORIENTDB_BASE_URL}/orientdb-community/${ORIENTDB_VERSION}/${ORIENTDB_PACKAGE_FILENAME}" && \
     \
     apk upgrade --update && \
-    apk --no-cache add ca-certificates openssl zlib && \
-    apk --no-cache add --virtual=.build-dependencies openssl-dev curl libarchive-tools && \
+    apk --no-cache add --quiet  ca-certificates openssl zlib && \
+    apk --no-cache add --quiet --virtual=.build-dependencies openssl-dev curl libarchive-tools && \
     \
     echo "Downloading and installing OrientDB package: $ORIENTDB_PACKAGE_FILENAME" >&2 && \
     mkdir -p "${ORIENTDB_HOME}" && \
@@ -32,7 +32,8 @@ RUN ORIENTDB_VERSION="2.2.8" && \
     ln -s "${DEPLOYMENT_FOLDER}"/log "${ORIENTDB_HOME}" && \
     rm -rf "${ORIENTDB_HOME}/benchmarks" && \
     \
-    apk del .build-dependencies && \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
 ENV PATH "${ORIENTDB_HOME}"/bin:$PATH

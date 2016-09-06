@@ -63,8 +63,8 @@ RUN NGINX_VERSION="1.11.3" && \
     OPENRESTY_JSON_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_JSON_MODULE}/archive/${OPENRESTY_JSON_MODULE_VERSION}.zip" && \
     \
     apk upgrade --update && \
-    apk --no-cache add ca-certificates openssl pcre zlib && \
-    apk --no-cache add --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev && \
+    apk --no-cache add --quiet ca-certificates openssl pcre zlib && \
+    apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
     curl -kSL "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -187,7 +187,8 @@ RUN NGINX_VERSION="1.11.3" && \
       make install PREFIX=/usr LUA_INCLUDE_DIR="${LUAJIT_INC}" && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \
     \
-    apk del .build-dependencies && \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
 ADD files/usr /usr

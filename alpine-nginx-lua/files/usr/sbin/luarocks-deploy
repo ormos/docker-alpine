@@ -47,9 +47,9 @@ cat <<- -EOF-
 
 prepare_luarocks() {
 	printf >&2 'Installing required system packages...\n'
-  apk --no-cache add --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev zip unzip
+  apk --no-cache add --quiet --virtual=.luarocks-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev zip unzip
 
-  printf >&2 'Downloading and building LuaRocks package: %s' "${LUAROCKS_PACKAGE_FILENAME}\n"
+  printf >&2 'Downloading and building LuaRocks package: %s\n' "${LUAROCKS_PACKAGE_FILENAME}"
   curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
   cd "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
   ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
@@ -63,7 +63,7 @@ cleanup_luarocks() {
     printf >&2 'Relocating installed packages...\n'
     ( mkdir -p "${TMP_FOLDER:?}/luarocks-deploy" ; cd "${TMP_FOLDER:?}/luarocks-deploy"
       pack_rocks >/dev/null 2>&1
-      luarocks purge --tree=system >/dev/null 2>&1l
+      luarocks purge --tree=system >/dev/null 2>&1
       find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | \
         xargs -0 -n1 -I{} bsdtar -xf {} \
           --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' \
@@ -80,7 +80,7 @@ cleanup_luarocks() {
          "/usr/bin/luarocks" \
          "/usr/share/lua/${LUA_VERSION}/luarocks" \
          "/root/.cache" >/dev/null 2>&1
-  apk del .build-dependencies >/dev/null 2>&1
+  apk del --quiet --purge .luarocks-dependencies
   rm -rf "${TMP_FOLDER:?}/luarocks-deploy" /var/cache/apk/* >/dev/null 2>&1
 }
 

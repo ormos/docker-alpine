@@ -15,8 +15,8 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
     ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_PACKAGE_KEY="sgerrand.rsa.pub" && \
     apk upgrade --update && \
-    apk add --no-cache ca-certificates && \
-    apk add --no-cache --virtual=.build-dependencies curl && \
+    apk add --no-cache --quiet ca-certificates && \
+    apk add --no-cache --quiet --virtual=.build-dependencies curl && \
     echo "Downloading GLIBC package key: $ALPINE_GLIBC_PACKAGE_KEY" >&2 && \
     curl -jkSL -o "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_PACKAGE_KEY" && \
@@ -37,12 +37,13 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
     /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true && \
     echo "export LANG=$LANG" > /etc/profile.d/locale.sh && \
     \
-    apk del glibc-i18n && \
+    apk del --quiet --purge glibc-i18n && \
     rm \
         "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" \
         "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" && \
     \
-    apk del .build-dependencies && \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*

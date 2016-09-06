@@ -6,16 +6,22 @@ RUN GEOIP_COUNTRY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/G
     GEOIP_CITY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" && \
     \
     apk upgrade --update && \
-    apk --no-cache add --virtual=.build-dependencies curl libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies curl libarchive-tools && \
     \
-    echo "Downloading and installing GeoIP databases" >&2 && \
+    echo "Downloading and installing GeoIP databases..." >&2 && \
     mkdir -p "/etc/nginx/geoip" && \
     curl -kSL "${GEOIP_COUNTRY_DATA_URL}" | gunzip >|"/etc/nginx/geoip/GeoIP-Country.dat" && \
     curl -kSL "${GEOIP_CITY_DATA_URL}"    | gunzip >|"/etc/nginx/geoip/GeoIP-City.dat" && \
     \
-    apk del .build-dependencies && \
+    echo "Deploying optional LUA packages..." >&2 && \
+    luarocks-deploy add "lua-iconv" && \
+    \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
-    VOLUME ["/etc/nginx/geoip"]
+ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
 
-    CMD ["nginx", "-g", "daemon off;"]
+VOLUME ["/etc/nginx/geoip"]
+
+CMD ["nginx", "-g", "daemon off;"]
