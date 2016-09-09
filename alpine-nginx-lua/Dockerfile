@@ -64,7 +64,7 @@ RUN NGINX_VERSION="1.11.3" && \
     \
     apk upgrade --update && \
     apk --no-cache add --quiet ca-certificates openssl pcre zlib && \
-    apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev && \
+    apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev libmaxminddb-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
     curl -kSL "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -109,6 +109,7 @@ RUN NGINX_VERSION="1.11.3" && \
         --user=nginx \
         --group=nginx \
         --without-http_userid_module \
+        --without-http_ssi_module \
         --without-http_fastcgi_module \
         --without-http_uwsgi_module \
         --without-http_scgi_module \
@@ -206,4 +207,4 @@ EXPOSE 80 443
 
 WORKDIR ${DEPLOYMENT_FOLDER}/
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off; error_log /dev/stderr info;"]
