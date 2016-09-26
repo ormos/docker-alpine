@@ -62,7 +62,7 @@ RUN NGINX_VERSION="1.11.3" && \
     OPENRESTY_JSON_MODULE_FOLDER="${OPENRESTY_JSON_MODULE}-${OPENRESTY_JSON_MODULE_VERSION}" && \
     OPENRESTY_JSON_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_JSON_MODULE}/archive/${OPENRESTY_JSON_MODULE_VERSION}.zip" && \
     \
-    apk upgrade --update && \
+    apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates openssl pcre zlib && \
     apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev libmaxminddb-dev && \
     \

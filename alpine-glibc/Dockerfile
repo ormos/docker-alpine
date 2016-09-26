@@ -14,9 +14,9 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
     ALPINE_GLIBC_BIN_PACKAGE_FILENAME="glibc-bin-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_I18N_PACKAGE_FILENAME="glibc-i18n-$ALPINE_GLIBC_PACKAGE_VERSION.apk" && \
     ALPINE_GLIBC_PACKAGE_KEY="sgerrand.rsa.pub" && \
-    apk upgrade --update && \
-    apk add --no-cache --quiet ca-certificates && \
-    apk add --no-cache --quiet --virtual=.build-dependencies curl && \
+    apk --no-cache upgrade --update && \
+    apk --no-cache add --quiet ca-certificates && \
+    apk --no-cache add --quiet --virtual=.build-dependencies curl && \
     echo "Downloading GLIBC package key: $ALPINE_GLIBC_PACKAGE_KEY" >&2 && \
     curl -jkSL -o "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_PACKAGE_KEY" && \

@@ -15,7 +15,7 @@ RUN ORIENTDB_VERSION="2.2.8" && \
     ORIENTDB_BASE_URL="http://repo1.maven.org/maven2/com/orientechnologies" && \
     ORIENTDB_PACKAGE_URL="${ORIENTDB_BASE_URL}/orientdb-community/${ORIENTDB_VERSION}/${ORIENTDB_PACKAGE_FILENAME}" && \
     \
-    apk upgrade --update && \
+    apk --no-cache upgrade --update && \
     apk --no-cache add --quiet  ca-certificates openssl zlib && \
     apk --no-cache add --quiet --virtual=.build-dependencies openssl-dev curl libarchive-tools && \
     \

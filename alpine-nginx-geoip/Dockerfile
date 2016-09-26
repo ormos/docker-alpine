@@ -5,7 +5,7 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 RUN GEOIP_COUNTRY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz" && \
     GEOIP_CITY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" && \
     \
-    apk upgrade --update && \
+    apk --no-cache upgrade --update && \
     apk --no-cache add --quiet --virtual=.build-dependencies curl libarchive-tools && \
     \
     echo "Downloading and installing GeoIP databases..." >&2 && \

@@ -12,9 +12,9 @@ ENV JAVA_VERSION_MAJOR=8 \
     JAVA_JCE=unlimited \
     JAVA_HOME=/usr/lib/jvm/default-jvm
 
-RUN apk upgrade --update && \
-    apk add --no-cache --quiet ca-certificates && \
-    apk add --no-cache --quiet --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
+RUN apk --no-cache upgrade --update && \
+    apk --no-cache add --quiet ca-certificates && \
+    apk --no-cache add --quiet --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
