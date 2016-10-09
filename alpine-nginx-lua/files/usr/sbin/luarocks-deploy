@@ -47,7 +47,7 @@ cat <<- -EOF-
 
 prepare_luarocks() {
 	printf >&2 'Installing required system packages...\n'
-  apk --no-cache add --quiet --virtual=.luarocks-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev zip unzip
+  apk --no-cache add --quiet --virtual=.luarocks-dependencies build-base linux-headers openssl-dev pcre-dev curl git libarchive-tools zlib-dev zip unzip
 
   printf >&2 'Downloading and building LuaRocks package: %s\n' "${LUAROCKS_PACKAGE_FILENAME}"
   curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
