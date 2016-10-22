@@ -1,4 +1,10 @@
 FROM alpine:3.4
-COPY scripts/mkimage-alpine.bash scripts/apk-install /
+
+MAINTAINER elvido <ralf.hofmann@elvido.net>
+
 RUN /apk-install bash tzdata
-ENTRYPOINT ["/mkimage-alpine.bash"]
+
+COPY scripts/mkimage-alpine scripts/apk-install /
+
+ENTRYPOINT ["/mkimage-alpine"]
+CMD ["-h"]
