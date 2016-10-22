@@ -12,10 +12,14 @@ main() {
 			| tar zxf -
 		mkdir -p /glibc-build && cd /glibc-build
 		"/glibc-${version}/configure" \
+		    --host=x86_64-pc-linux-gnu \
+			--with-headers="/usr/include" \
 			--prefix="${prefix}" \
 			--libdir="${prefix}/lib" \
 			--libexecdir="${prefix}/lib" \
 			--enable-multi-arch
+		# patch the old rpc types
+		sed -i -e 's/defined __APPLE_CC__ || defined __FreeBSD__/defined __APPLE_CC__ || defined __FreeBSD__ || defined(_GNU_SOURCE)/g' /glibc-${version}/sunrpc/rpc/types.h
 		make && make install
 		tar --hard-dereference -zcf "/glibc-bin-${version}.tgz" "${prefix}"
 	} >&2
