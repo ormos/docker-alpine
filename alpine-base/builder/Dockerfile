@@ -2,7 +2,8 @@ FROM alpine:3.4
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-RUN /apk-install bash tzdata
+RUN apk --no-cache upgrade --update && \
+    apk --no-cache add --quiet ca-certificates bash tzdata
 
 COPY scripts/mkimage-alpine scripts/apk-install /
 
