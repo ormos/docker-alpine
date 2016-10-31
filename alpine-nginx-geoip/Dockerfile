@@ -20,8 +20,6 @@ RUN GEOIP_COUNTRY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/G
     apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
-ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
-
 VOLUME ["/etc/nginx/geoip"]
 
 CMD ["nginx", "-g", "daemon off;"]

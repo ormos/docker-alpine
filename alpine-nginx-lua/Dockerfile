@@ -188,18 +188,13 @@ RUN NGINX_VERSION="1.11.3" && \
       make install PREFIX=/usr LUA_INCLUDE_DIR="${LUAJIT_INC}" && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \
     \
-    echo "Cleaning up..." >&2 && \
-    apk del --quiet --purge .build-dependencies && \
-    rm -rf /tmp/* /var/cache/apk/*
+    rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
+           ${DEPLOYMENT_FOLDER}/log/*    \
+           ${DEPLOYMENT_FOLDER}/cache/*  \
+           ${DEPLOYMENT_FOLDER}/config/*.conf \
+           ${DEPLOYMENT_FOLDER}/html
 
 ADD files/usr /usr
-
-ONBUILD RUN rm -rf ${DEPLOYMENT_FOLDER}/run/*    \
-                   ${DEPLOYMENT_FOLDER}/log/*    \
-                   ${DEPLOYMENT_FOLDER}/cache/*  \
-                   ${DEPLOYMENT_FOLDER}/config/*.conf \
-                   ${DEPLOYMENT_FOLDER}/html
-ONBUILD COPY files/nginx ${DEPLOYMENT_FOLDER}/
 
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 

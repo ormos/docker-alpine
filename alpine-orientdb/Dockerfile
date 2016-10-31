@@ -34,11 +34,11 @@ RUN ORIENTDB_VERSION="2.2.12" && \
     \
     echo "Cleaning up..." >&2 && \
     apk del --quiet --purge .build-dependencies && \
-    rm -rf /tmp/* /var/cache/apk/*
+    rm -rf /tmp/* /var/cache/apk/* && \
+    \
+    rm -rf "${DEPLOYMENT_FOLDER}"/databases/*
 
 ENV PATH "${ORIENTDB_HOME}"/bin:$PATH
-
-ONBUILD RUN rm -rf "${DEPLOYMENT_FOLDER}"/databases/*
 
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 
