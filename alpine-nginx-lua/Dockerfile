@@ -194,7 +194,7 @@ RUN NGINX_VERSION="1.11.3" && \
            ${DEPLOYMENT_FOLDER}/config/*.conf \
            ${DEPLOYMENT_FOLDER}/html
 
-ADD files/usr /usr
+ADD rootfs /
 
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 
