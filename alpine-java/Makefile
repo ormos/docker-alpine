@@ -14,6 +14,8 @@ INSTANCE = default
 
 .PHONY: build push shell run start stop rm release tag $(TAGS)
 
+default: build
+
 build:
 	docker build -t $(NS)/$(REPO):$(VERSION) .
 
@@ -43,5 +45,3 @@ tag: $(TAGS)
 
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
-
-default: build

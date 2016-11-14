@@ -4,8 +4,9 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 
 LABEL "net.elvido.alpine-abuild"="3.4"
 
-ENV RSA_PRIVATE_KEY_NAME=ssh.rsa
-ENV PACKAGER_PRIVKEY=/home/builder/${RSA_PRIVATE_KEY_NAME}
+ENV BUILDER_HOME=/home/builder
+ENV PACKAGER_PRIVATE_KEY_NAME=packager.key
+ENV PACKAGER_PRIVKEY=/home/builder/.abuild/${PACKAGER_PRIVATE_KEY_NAME}
 ENV REPODEST=/packages
 
 RUN apk --no-cache upgrade --update && \
@@ -14,12 +15,18 @@ RUN apk --no-cache upgrade --update && \
     adduser -G abuild -g "Alpine Package Builder" -s /bin/ash -D builder && \
     echo "builder ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     \
-    mkdir /packages && \
-    chown builder:abuild /packages
+    mkdir ${BUILDER_HOME}/.abuild && \
+    chown builder:abuild ${BUILDER_HOME}/.abuild && \
+    \
+    mkdir ${BUILDER_HOME}/package && \
+    chown builder:abuild ${BUILDER_HOME}/package && \
+    \ 
+    mkdir ${REPODEST} && \
+    chown builder:abuild ${REPODEST}
 
 COPY scripts/abuilder /bin/
 
-WORKDIR /home/builder/package
+WORKDIR ${BUILDER_HOME}/package
 
 USER builder
 

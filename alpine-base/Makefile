@@ -7,6 +7,8 @@ endif
 
 .PHONY: build push commit clean
 
+default: build
+
 build:
 	./build-image
 
@@ -18,5 +20,3 @@ commit:
 
 clean:
 	./build-image cleanup
-
-default: build
