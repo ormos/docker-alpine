@@ -21,8 +21,8 @@ RUN apk --no-cache upgrade --update && \
     mkdir ${BUILDER_HOME}/package && \
     chown builder:abuild ${BUILDER_HOME}/package && \
     \ 
-    mkdir ${REPODEST} && \
-    chown builder:abuild ${REPODEST}
+    mkdir -p ${REPODEST}/builder && \
+    chown builder:abuild ${REPODEST}/builder
 
 COPY scripts/abuilder /bin/
 

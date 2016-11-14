@@ -2,6 +2,8 @@
 
 This is a Docker image for building Alpine Linux packages.
 
+git://git.alpinelinux.org/aports
+
 ## Usage
 
 There are currently three tags to choose from:

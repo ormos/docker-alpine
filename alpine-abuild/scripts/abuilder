@@ -5,7 +5,7 @@ set -e
 main() {
   mkdir -p "${REPODEST}" /home/builder/.abuild
   abuild-apk update
-  [ "${PACKAGER_PRIVATE_KEY_DATA}" ] && {
+  [ "${PACKAGER_PRIVATE_KEY_NAME}" ] && {
     echo -e "${PACKAGER_PRIVATE_KEY_DATA}" > "/home/builder/.abuild/${PACKAGER_PRIVATE_KEY_NAME}"
     export PACKAGER_PRIVKEY="/home/builder/.abuild/${PACKAGER_PRIVATE_KEY_NAME}"
   }

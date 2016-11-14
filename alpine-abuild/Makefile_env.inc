@@ -19,7 +19,7 @@ PACKAGER_PRIVATE_KEY_DATA := $(shell openssl rsa -in $(PACKAGER_CRT) -outform PE
 endif
 
 VOLUMES = \
-  -v $(PWD):/home/builder/package \
+  -v $(PWD)/pkgs/skalibs:/home/builder/package \
   -v $(PWD)/packages:/packages \
   -v $(ROOT_DIR)/$(PACKAGER_KEY):/home/builder/.abuild/$(PACKAGER_KEY)
 
