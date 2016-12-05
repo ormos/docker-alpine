@@ -192,7 +192,11 @@ RUN NGINX_VERSION="1.11.3" && \
            ${DEPLOYMENT_FOLDER}/log/*    \
            ${DEPLOYMENT_FOLDER}/cache/*  \
            ${DEPLOYMENT_FOLDER}/config/*.conf \
-           ${DEPLOYMENT_FOLDER}/html
+           ${DEPLOYMENT_FOLDER}/html \
+    \
+    echo "Cleaning up..." >&2 && \
+    apk del --quiet --purge .build-dependencies && \
+    rm -rf /tmp/* /var/cache/apk/*
 
 ADD rootfs /
 
