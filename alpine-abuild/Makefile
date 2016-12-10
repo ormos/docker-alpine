@@ -23,20 +23,13 @@ build:
 push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
-shell:
+shell: $(PACKAGER_KEY) $(PACKAGER_RSA)
 	docker run --rm --name $(NAME)-$(INSTANCE) --entrypoint /bin/sh -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) 
+	$(PACKAGER_RSA_RELEASE)
 
-run: $(PACKAGER_KEY)
-	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) build
-
-start:
-	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
-
-stop:
-	docker stop $(NAME)-$(INSTANCE)
-
-rm:
-	docker rm $(NAME)-$(INSTANCE)
+run: $(PACKAGER_KEY) $(PACKAGER_RSA)
+	-docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) build
+	$(PACKAGER_RSA_RELEASE)
 
 release: build
 	@make --no-print-directory tag -e VERSION="$(VERSION)" -e TAGS="$(TAGS)"
@@ -47,6 +40,16 @@ tag: $(TAGS)
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
 
+ifdef PACKAGER_RSA
+$(PACKAGER_RSA): $(PACKAGER_CRT)
+	$(PACKAGER_RSA_RETRIEVE) >$@
+endif
+
+ifdef PACKAGER_KEY
+$(PACKAGER_KEY): $(PACKAGER_CRT)
+	$(PACKAGER_KEY_RETRIEVE) >$@
+endif
+
 ifdef SECRET_SET
 secret-save:
 	$(SECRET_SET)
@@ -55,13 +58,4 @@ endif
 ifdef SECRET_DEL
 secret-remove:
 	$(SECRET_DEL)
-endif
-
-ifdef PACKAGER_KEY
-$(PACKAGER_KEY): $(PACKAGER_CRT)
-ifdef SECRET_GET
-	$(SECRET_GET) | openssl rsa -in $< -passin stdin -pubout -outform PEM -out $@
-else
-	openssl rsa -in $< -pubout -outform PEM -out $@
-endif
 endif

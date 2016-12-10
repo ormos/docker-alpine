@@ -3,3 +3,5 @@
 .git/
 Dockerfile
 README.md
+*.key
+*.rsa

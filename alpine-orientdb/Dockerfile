@@ -8,7 +8,7 @@ LABEL "net.elvido.alpine-orientdb"="3.4"
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/lcoal/orientdb"
 
-RUN ORIENTDB_VERSION="2.2.12" && \
+RUN ORIENTDB_VERSION="2.2.13" && \
     ORIENTDB_PACKAGE_VERSION="${ORIENTDB_VERSION}" && \
     ORIENTDB_PACKAGE_FILENAME="orientdb-community-${ORIENTDB_VERSION}.tar.gz" && \
     ORIENTDB_PACKAGE_FOLDER="orientdb" && \
