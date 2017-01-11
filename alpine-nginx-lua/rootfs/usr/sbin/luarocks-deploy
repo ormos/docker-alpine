@@ -12,8 +12,8 @@ LUAROCKS_PACKAGE_URL="${LUAROCKS_BASE_URL}/${LUAROCKS_PACKAGE_FILENAME}"
 
 # the full qualified path of the script
 SCRIPT_NAME=$(basename -- "$0")
-SCRIPT_PATH=$(dirname -- "$(readlink -f "$0")")
-TMP_FOLDER="${TMPDIR:-/tmp/$(id -u)}${SCRIPT_NAME}-$$/"
+SCRIPT_PATH=$(dirname -- "$($(type -P greadlink || type -P readlink) -f "$0")")
+TMP_FOLDER="${TMPDIR:-/tmp/$(id -u)}/${SCRIPT_NAME}-$$/"
 
 _usage() {
 	printf >&2 'usage: %s [-h|--help] [-v|--version] [-C|--directroy <folder>] [-N|--no-relocate] prepare|cleanup|install|add|export <packages>\n' "${SCRIPT_NAME}" && exit 1
