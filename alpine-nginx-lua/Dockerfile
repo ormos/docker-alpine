@@ -1,4 +1,4 @@
-FROM elvido/alpine-glibc
+FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
@@ -10,7 +10,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib"
 
-RUN NGINX_VERSION="1.11.3" && \
+RUN NGINX_VERSION="1.11.8" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \

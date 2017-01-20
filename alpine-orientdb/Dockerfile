@@ -1,14 +1,15 @@
 FROM elvido/alpine-java
-# FROM java:openjdk-8-jdk-alpine
+#FROM java:openjdk-8-jdk-alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
 LABEL "net.elvido.alpine-orientdb"="3.4"
 
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \
-    ORIENTDB_HOME="/usr/lcoal/orientdb"
+    ORIENTDB_HOME="/usr/local/orientdb" \
+    ORIENTDB_PID="/var/run/orientdb.pid"
 
-RUN ORIENTDB_VERSION="2.2.13" && \
+RUN ORIENTDB_VERSION="2.2.15" && \
     ORIENTDB_PACKAGE_VERSION="${ORIENTDB_VERSION}" && \
     ORIENTDB_PACKAGE_FILENAME="orientdb-community-${ORIENTDB_VERSION}.tar.gz" && \
     ORIENTDB_PACKAGE_FOLDER="orientdb" && \
