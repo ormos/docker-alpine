@@ -2,7 +2,7 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-nginx-lua"="3.4"
+LABEL "net.elvido.alpine-nginx-lua"="3.5"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \

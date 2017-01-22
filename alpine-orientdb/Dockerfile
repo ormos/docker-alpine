@@ -1,9 +1,8 @@
 FROM elvido/alpine-java
-#FROM java:openjdk-8-jdk-alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-orientdb"="3.4"
+LABEL "net.elvido.alpine-orientdb"="3.5"
 
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/local/orientdb" \

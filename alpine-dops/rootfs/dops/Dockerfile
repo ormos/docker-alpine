@@ -1,13 +1,16 @@
-FROM alpine:3.2
+FROM elvido/alpine
 
-RUN apk --update \
-    add curl sudo
+MAINTAINER elvido <ralf.hofmann@elvido.net>
+
+RUN apk --no-cache upgrade --update && \
+    apk --no-cache add --quiet ca-certificates && \
+    apk --no-cache add --quiet curl sudo
 
 RUN adduser -g '' -D  z z && \
     echo 'z ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # Cache some packages
-RUN apk add \
+RUN apk --no-cache add --quiet \
     git \
     zsh \
     tmux \

@@ -2,6 +2,8 @@ FROM elvido/alpine-nginx-lua
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
+LABEL "net.elvido.alpine-nginx-geoip"="3.5"
+
 RUN GEOIP_COUNTRY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz" && \
     GEOIP_CITY_DATA_URL="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" && \
     \

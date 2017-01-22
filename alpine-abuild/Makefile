@@ -5,7 +5,7 @@ include $(ENV_FILE)
 endif
 
 NS = elvido
-VERSION ?= 3.4
+VERSION ?= 3.5
 TAGS ?= latest
 
 REPO = alpine-abuild
@@ -13,7 +13,7 @@ NAME = alpine-abuild
 INSTANCE = default
 
 
-.PHONY: secret-save secret-remove build push shell run start stop rm release tag $(TAGS) 
+.PHONY: secret-save secret-remove build push shell run start stop clean release tag $(TAGS) 
 
 default: build
 
@@ -34,6 +34,10 @@ run: $(PACKAGER_KEY) $(PACKAGER_RSA)
 release: build
 	@make --no-print-directory tag -e VERSION="$(VERSION)" -e TAGS="$(TAGS)"
 	@make --no-print-directory push -e VERSION="$(VERSION)"
+
+clean:
+	$(PACKAGER_RSA_RELEASE)
+	$(PACKAGER_KEY_RELEASE)
 
 tag: $(TAGS)
 

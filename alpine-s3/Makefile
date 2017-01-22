@@ -8,8 +8,8 @@ NS = elvido
 VERSION ?= 3.5
 TAGS ?= latest
 
-REPO = alpine-node
-NAME = alpine-node
+REPO = alpine-s3
+NAME = alpine-s3
 INSTANCE = default
 
 .PHONY: build push shell run start stop rm release tag $(TAGS)

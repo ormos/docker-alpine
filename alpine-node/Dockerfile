@@ -2,7 +2,7 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-node"="3.4"
+LABEL "net.elvido.alpine-node"="3.5"
 
 # Node Version
 ENV  NODE_VERSION=v7.4.0 \

@@ -1,8 +1,8 @@
-FROM elvido/alpine:edge
+FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-dops"="3.4"
+LABEL "net.elvido.alpine-dops"="3.5"
 
 ENV WORK_FOLDER="/dops"
 
