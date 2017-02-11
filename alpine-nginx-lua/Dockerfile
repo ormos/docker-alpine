@@ -8,26 +8,24 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \
     LUA_JIT="2.1" \
     LUA_INC="/usr/include/luajit-2.1" \
-    LUA_LIB="/usr/lib"
+    LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.11.8" && \
+RUN NGINX_VERSION="1.11.9" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
     NGINX_BASE_URL="http://nginx.org/download" && \
     NGINX_PACKAGE_URL="${NGINX_BASE_URL}/${NGINX_PACKAGE_FILENAME}" && \
-    LUAJIT_VERSION="2.1" && \
-    LUAJIT_PACKAGE_VERSION="${LUAJIT_VERSION}.0-beta2" && \
-    LUAJIT_PACKAGE_FILENAME="LuaJIT-${LUAJIT_PACKAGE_VERSION}.tar.gz" && \
-    LUAJIT_PACKAGE_FOLDER="LuaJIT-${LUAJIT_PACKAGE_VERSION}" && \
-    LUAJIT_BASE_URL="http://luajit.org/download" && \
-    LUAJIT_PACKAGE_URL="${LUAJIT_BASE_URL}/${LUAJIT_PACKAGE_FILENAME}" && \
-    GEOIP_VERSION="1.6.9" && \
-    GEOIP_PACKAGE_VERSION="${GEOIP_VERSION}" && \
-    GEOIP_PACKAGE_FILENAME="GeoIP-${GEOIP_PACKAGE_VERSION}.tar.gz" && \
-    GEOIP_PACKAGE_FOLDER="GeoIP-${GEOIP_PACKAGE_VERSION}" && \
-    GEOIP_BASE_URL="https://github.com/maxmind/geoip-api-c/releases/download" && \
-    GEOIP_PACKAGE_URL="${GEOIP_BASE_URL}/v${GEOIP_VERSION}/${GEOIP_PACKAGE_FILENAME}" && \
+    NGINX_DEVKIT_MODULE="ngx_devel_kit" && \
+    NGINX_DEVKIT_MODULE_VERSION="0.3.0" && \
+    NGINX_DEVKIT_MODULE_FOLDER="${NGINX_DEVKIT_MODULE}-${NGINX_DEVKIT_MODULE_VERSION}" && \
+    NGINX_DEVKIT_BASE_URL="https://github.com/simpl/ngx_devel_kit" && \
+    NGINX_DEVKIT_MODULE_URL="${NGINX_DEVKIT_BASE_URL}/archive/v${NGINX_DEVKIT_MODULE_VERSION}.zip" && \
+    NGINX_GEOIP_MODULE="ngx_http_geoip2_module" && \
+    NGINX_GEOIP_MODULE_VERSION="master" && \
+    NGINX_GEOIP_MODULE_FOLDER="${NGINX_GEOIP_MODULE}-${NGINX_GEOIP_MODULE_VERSION}" && \
+    NGINX_GEOIP_BASE_URL="https://github.com/leev" && \
+    NGINX_GEOIP_MODULE_URL="${NGINX_GEOIP_BASE_URL}/${NGINX_GEOIP_MODULE}/archive/${NGINX_GEOIP_MODULE_VERSION}.zip" && \
     OPENRESTY_BASE_URL="https://github.com/openresty" && \
     OPENRESTY_LUA_MODULE="lua-nginx-module" && \
     OPENRESTY_LUA_MODULE_VERSION="master" && \
@@ -61,9 +59,15 @@ RUN NGINX_VERSION="1.11.8" && \
     OPENRESTY_JSON_MODULE_VERSION="master" && \
     OPENRESTY_JSON_MODULE_FOLDER="${OPENRESTY_JSON_MODULE}-${OPENRESTY_JSON_MODULE_VERSION}" && \
     OPENRESTY_JSON_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_JSON_MODULE}/archive/${OPENRESTY_JSON_MODULE_VERSION}.zip" && \
+    LUAJIT_VERSION="2.1" && \
+    LUAJIT_PACKAGE_VERSION="${LUAJIT_VERSION}.0-beta2" && \
+    LUAJIT_PACKAGE_FILENAME="v${LUAJIT_VERSION}.zip" && \
+    LUAJIT_PACKAGE_FOLDER="LuaJIT-${LUAJIT_VERSION}" && \
+    LUAJIT_BASE_URL="https://github.com/LuaJIT/LuaJIT" && \
+    LUAJIT_PACKAGE_URL="${LUAJIT_BASE_URL}/archive/${LUAJIT_PACKAGE_FILENAME}" && \
     \
     apk --no-cache upgrade --update && \
-    apk --no-cache add --quiet ca-certificates openssl pcre zlib && \
+    apk --no-cache add --quiet ca-certificates libstdc++ openssl pcre zlib libmaxminddb && \
     apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev libmaxminddb-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
@@ -71,26 +75,15 @@ RUN NGINX_VERSION="1.11.8" && \
     cd "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
       make PREFIX=/usr && \
       make install PREFIX=/usr && \
-      ln -sf /usr/bin/luajit-${LUAJIT_PACKAGE_VERSION} /usr/bin/luajit || true && \
+      ln -sf /usr/bin/luajit-${LUAJIT_PACKAGE_VERSION} /usr/bin/luajit || : && \
       export LUAJIT_LIB="${LUA_LIB}" && \
       export LUAJIT_INC="${LUA_INC}" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
     \
-    echo "Downloading and building GeoIP package: $GEOIP_PACKAGE_FILENAME" >&2 && \
-    echo "${GEOIP_PACKAGE_URL}" >&2 && \
-    curl -kSL "${GEOIP_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
-    cd "/tmp/${GEOIP_PACKAGE_FOLDER}" && \
-      ./configure \
-        --prefix=/usr \
-        --sysconfdir=/etc/geoip \
-        --mandir=/usr/share/man \
-        --infodir=/usr/share/info \
-      && \
-      make install && \
-    cd /tmp && rm -rf "/tmp/${GEOIP_PACKAGE_FOLDER}" && \
-    \
     echo "Downloading and building nginx package: $NGINX_PACKAGE_FILENAME" >&2 && \
     curl -kSL "${NGINX_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL "${NGINX_DEVKIT_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL "${NGINX_GEOIP_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     curl -kSL "${OPENRESTY_LUA_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     curl -kSL "${OPENRESTY_UPSTREAM_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     curl -kSL "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -99,6 +92,7 @@ RUN NGINX_VERSION="1.11.8" && \
       ./configure \
         --prefix=/etc/nginx \
         --sbin-path=/usr/sbin/nginx \
+        --modules-path=/usr/lib/nginx/modules \
         --conf-path="${DEPLOYMENT_FOLDER}/config/nginx.conf" \
         --error-log-path="${DEPLOYMENT_FOLDER}/log/error.log" \
         --http-log-path="${DEPLOYMENT_FOLDER}/log/access.log" \
@@ -136,7 +130,8 @@ RUN NGINX_VERSION="1.11.8" && \
   	    --with-pcre-jit \
         --with-mail=dynamic \
         --with-mail_ssl_module \
-        --with-http_geoip_module=dynamic \
+        --add-dynamic-module="../${NGINX_DEVKIT_MODULE_FOLDER}" \
+        --add-dynamic-module="../${NGINX_GEOIP_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_ECHO_MODULE_FOLDER}" \
@@ -149,6 +144,8 @@ RUN NGINX_VERSION="1.11.8" && \
       make install && \
     cd /tmp && rm -rf \
       "/tmp/${NGINX_PACKAGE_FOLDER}" \
+      "/tmp/${NGINX_DEVKIT_MODULE_FOLDER}" \
+      "/tmp/${NGINX_GEOIP_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}" \
@@ -160,6 +157,7 @@ RUN NGINX_VERSION="1.11.8" && \
           "${DEPLOYMENT_FOLDER}/config/"*.default \
     && \
     mv /etc/nginx/html "${DEPLOYMENT_FOLDER}" && \
+    rmdir /etc/nginx 2>/dev/null || : && \
     sed -i -e "s#root[[:blank:]]\+html;#root ${DEPLOYMENT_FOLDER}/html;#g" "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
     sed -i -e 's/#access_log[[:blank:]]\+logs\/access.log[[:blank:]]\+main;/access_log \/dev\/stdout;/' -e 's/#error_log[[:blank:]]\+logs\/error.log[[:blank:]]\+notice;/error_log \/dev\/stderr notice;/' "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
     adduser -D nginx && \
@@ -198,7 +196,7 @@ RUN NGINX_VERSION="1.11.8" && \
     apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
 
-ADD rootfs /
+COPY rootfs /
 
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 
@@ -206,4 +204,7 @@ EXPOSE 80 443
 
 WORKDIR ${DEPLOYMENT_FOLDER}/
 
-CMD ["nginx", "-g", "daemon off; error_log /dev/stderr info;"]
+CMD ["nginx", \
+     "-p", "/usr/lib/nginx", \
+     "-c", "/var/nginx/config/nginx.conf", \
+     "-g", "daemon off; error_log /dev/stderr info;"]

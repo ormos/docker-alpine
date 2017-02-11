@@ -67,9 +67,9 @@ cleanup_luarocks() {
       find . \( -name '*.rock' -a ! -name 'luarocks-*' \) -type f -print0 | \
         xargs -0 -n1 -I{} bsdtar -xf {} \
           --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' \
-          --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' \
-          --strip-components 1 -C "${LUA_LIB}/lua/${LUA_VERSION}"
-      find "${LUA_LIB}/lua/${LUA_VERSION}" -name '*~' -delete
+          --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' --exclude 'README' \
+          --strip-components 1 -C "${LUA_LIB}/${LUA_VERSION}"
+      find "${LUA_LIB}/${LUA_VERSION}" -name '*~' -delete
       cd .. ; rm  -rf "${TMP_FOLDER:?}/luarocks-deploy"
     )
   fi

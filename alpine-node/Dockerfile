@@ -5,9 +5,9 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 LABEL "net.elvido.alpine-node"="3.5"
 
 # Node Version
-ENV  NODE_VERSION=v7.4.0 \
-     NPM_VERSION=4 \
-     NPM_CONFIG_LOGLEVEL=info
+ENV  NODE_VERSION="7.5.0" \
+     NPM_VERSION="4" \
+     NPM_CONFIG_LOGLEVEL="info"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++ && \
@@ -17,17 +17,17 @@ RUN apk --no-cache upgrade --update && \
     \
     echo "Downloading NodeJS package archive" >&2 && \
     curl -jkSL \
-      https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}.tar.gz | \
+      https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz | \
       bsdtar -xf- -C '/tmp'  && \
     \
     echo "Budiling and installing NodeJS package" >&2 && \
-    cd /tmp/node-${NODE_VERSION} && \
+    cd /tmp/node-v${NODE_VERSION} && \
     ./configure --prefix=/usr && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
     make install && \
     paxctl -cm /usr/bin/node && \
     \
-    cd /tmp ; rm -rf /tmp/node-${NODE_VERSION} && \
+    cd /tmp ; rm -rf /tmp/node-v${NODE_VERSION} && \
     \
     if [ -x /usr/bin/npm ]; then \
       echo "Installing npm" >&2 && \
