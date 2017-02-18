@@ -13,8 +13,8 @@ See the [releases page](https://github.com/sgerrand/alpine-pkg-glibc/releases) f
 The current installation method for these packages is to pull them in using `wget` or `curl` and install the local file with `apk`:
 
     apk --no-cache add ca-certificates
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk
+    curl -jkSL -# -o /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
+    curl -jkSL -# -o glibc-2.23-r3.apk https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk
     apk add glibc-2.23-r3.apk
 
 ## Locales

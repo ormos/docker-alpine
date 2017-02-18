@@ -21,7 +21,7 @@ RUN INSTALLATION_BASE="/usr/local" && \
     apk --no-cache add --quiet --virtual=.build-dependencies build-base libarchive-tools zlib-dev python-dev libffi-dev && \
     \
     echo "Downloading and installing docker machine" >&2 && \
-    curl -kSL --output ${INSTALLATION_BASE}/bin/${DOCKER_MACHINE_PROGRAM_FILENAME} "${DOCKER_MACHINE_PACKAGE_URL}" && \
+    curl -kSL -# --output ${INSTALLATION_BASE}/bin/${DOCKER_MACHINE_PROGRAM_FILENAME} "${DOCKER_MACHINE_PACKAGE_URL}" && \
     chmod +x ${INSTALLATION_BASE}/bin/${DOCKER_MACHINE_PROGRAM_FILENAME} && \
     \
     pip install --upgrade pip && \

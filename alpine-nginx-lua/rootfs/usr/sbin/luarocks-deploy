@@ -50,7 +50,7 @@ prepare_luarocks() {
   apk --no-cache add --quiet --virtual=.luarocks-dependencies build-base linux-headers openssl-dev pcre-dev curl git libarchive-tools zlib-dev zip unzip
 
   printf >&2 'Downloading and building LuaRocks package: %s\n' "${LUAROCKS_PACKAGE_FILENAME}"
-  curl -kSL "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
+  curl -kSL -# "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
   cd "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
   ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
               --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"

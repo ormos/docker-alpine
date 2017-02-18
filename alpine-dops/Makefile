@@ -48,4 +48,4 @@ $(TAGS):
 
 assets:
 	mkdir -p rootfs/root/.vim/colors
-	curl -s -o rootfs/root/.vim/colors/monokai.vim https://raw.githubusercontent.com/sickill/vim-monokai/master/colors/monokai.vim
+	curl -jkSL -# -o rootfs/root/.vim/colors/monokai.vim https://raw.githubusercontent.com/sickill/vim-monokai/master/colors/monokai.vim

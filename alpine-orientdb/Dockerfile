@@ -21,7 +21,7 @@ RUN ORIENTDB_VERSION="2.2.15" && \
     \
     echo "Downloading and installing OrientDB package: $ORIENTDB_PACKAGE_FILENAME" >&2 && \
     mkdir -p "${ORIENTDB_HOME}" && \
-    curl -kSL "${ORIENTDB_PACKAGE_URL}" | bsdtar -xf- -C ${ORIENTDB_HOME} --strip-components=1 && \
+    curl -jkSL -# "${ORIENTDB_PACKAGE_URL}" | bsdtar -xf- -C ${ORIENTDB_HOME} --strip-components=1 && \
     \
     mkdir -p "${DEPLOYMENT_FOLDER}" && \
     mv "${ORIENTDB_HOME}/config" "${DEPLOYMENT_FOLDER}" && \

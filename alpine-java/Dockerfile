@@ -21,7 +21,7 @@ RUN apk --no-cache upgrade --update && \
     mkdir -p "${JAVA_DIR}" && \
     JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-linux-x64.tar.gz" && \
     echo "Downloading Java package archive: $JAVA_PACKAGE_FILENAME" >&2 && \
-    curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
+    curl -jkSL -# -H "Cookie: oraclelicense=accept-securebackup-cookie" \
       http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}u${JAVA_VERSION_MINOR}-b${JAVA_VERSION_BUILD}/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME} | \
       bsdtar -xf- -C "${JAVA_DIR}"  && \
     ln -s "${JAVA_DIR}/jdk1.${JAVA_VERSION_MAJOR}.0_${JAVA_VERSION_MINOR}" "${JAVA_HOME}" && \
@@ -30,7 +30,7 @@ RUN apk --no-cache upgrade --update && \
       echo "Installing Unlimited JCE policy" >&2 && \
       JAVA_JCE_FILENAME="jce_policy-${JAVA_VERSION_MAJOR}.zip" && \
       echo "Downloading Java JCE policy archive: $JAVA_JCE_FILENAME" >&2 && \
-      curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
+      curl -jkSL -# -H "Cookie: oraclelicense=accept-securebackup-cookie" \
         http://download.oracle.com/otn-pub/java/jce/${JAVA_VERSION_MAJOR}/${JAVA_JCE_FILENAME} | \
         bsdtar -xf- -C "/tmp" && \
       cp /tmp/UnlimitedJCEPolicyJDK8/*.jar "${JAVA_HOME}/jre/lib/security" && \

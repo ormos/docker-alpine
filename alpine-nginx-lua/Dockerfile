@@ -71,7 +71,7 @@ RUN NGINX_VERSION="1.11.9" && \
     apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev libmaxminddb-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
-    curl -kSL "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
       make PREFIX=/usr && \
       make install PREFIX=/usr && \
@@ -81,13 +81,19 @@ RUN NGINX_VERSION="1.11.9" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
     \
     echo "Downloading and building nginx package: $NGINX_PACKAGE_FILENAME" >&2 && \
-    curl -kSL "${NGINX_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${NGINX_DEVKIT_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${NGINX_GEOIP_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${OPENRESTY_LUA_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${OPENRESTY_UPSTREAM_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
-    curl -kSL "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${NGINX_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building nginx devkit package: $NGINX_DEVKIT_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${NGINX_DEVKIT_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building nginx geoip package: $NGINX_GEOIP_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${NGINX_GEOIP_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building openresty lua package: $OPENRESTY_LUA_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${OPENRESTY_LUA_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building openresty upstream package: $OPENRESTY_UPSTREAM_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${OPENRESTY_UPSTREAM_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building openresty echo package: $OPENRESTY_ECHO_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building openresty header package: $OPENRESTY_HEADER_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${NGINX_PACKAGE_FOLDER}" && \
       ./configure \
         --prefix=/etc/nginx \
@@ -163,25 +169,25 @@ RUN NGINX_VERSION="1.11.9" && \
     adduser -D nginx && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_CORE_MODULE" >&2 && \
-    curl -kSL "${OPENRESTY_CORE_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${OPENRESTY_CORE_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${OPENRESTY_CORE_MODULE_FOLDER}" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_CORE_MODULE_FOLDER}" && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_LRU_MODULE" >&2 && \
-    curl -kSL "${OPENRESTY_LRU_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${OPENRESTY_LRU_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${OPENRESTY_LRU_MODULE_FOLDER}" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_LRU_MODULE_FOLDER}" && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_DNS_MODULE" >&2 && \
-    curl -kSL "${OPENRESTY_DNS_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${OPENRESTY_DNS_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_JSON_MODULE" >&2 && \
-    curl -kSL "${OPENRESTY_JSON_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    curl -kSL -# "${OPENRESTY_JSON_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \
       make install PREFIX=/usr LUA_INCLUDE_DIR="${LUAJIT_INC}" && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_JSON_MODULE_FOLDER}" && \

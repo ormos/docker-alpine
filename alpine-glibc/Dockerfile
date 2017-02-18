@@ -18,16 +18,16 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
     apk --no-cache add --quiet ca-certificates && \
     apk --no-cache add --quiet --virtual=.build-dependencies curl && \
     echo "Downloading GLIBC package key: $ALPINE_GLIBC_PACKAGE_KEY" >&2 && \
-    curl -jkSL -o "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" \
+    curl -jkSL -# -o "/etc/apk/keys/$ALPINE_GLIBC_PACKAGE_KEY" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_PACKAGE_KEY" && \
     echo "Downloading GLIBC base package: $ALPINE_GLIBC_BASE_PACKAGE_FILENAME" >&2 && \
-    curl -jkSL -o "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
+    curl -jkSL -# -o "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" && \
     echo "Downloading GLIBC bin package: $ALPINE_GLIBC_BIN_PACKAGE_FILENAME" >&2 && \
-    curl -jkSL -o "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
+    curl -jkSL -# -o "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" && \
     echo "Downloading GLIBC i18n package: $ALPINE_GLIBC_I18N_PACKAGE_FILENAME" >&2 && \
-    curl -jkSL -o "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" \
+    curl -jkSL -# -o "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_BASE_URL/$ALPINE_GLIBC_PACKAGE_VERSION/$ALPINE_GLIBC_I18N_PACKAGE_FILENAME" && \
     apk add --no-cache \
         "$ALPINE_GLIBC_BASE_PACKAGE_FILENAME" \

@@ -16,7 +16,7 @@ RUN apk --no-cache upgrade --update && \
     adduser -D -u 1000 node && \
     \
     echo "Downloading NodeJS package archive" >&2 && \
-    curl -jkSL \
+    curl -jkSL -# \
       https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz | \
       bsdtar -xf- -C '/tmp'  && \
     \
