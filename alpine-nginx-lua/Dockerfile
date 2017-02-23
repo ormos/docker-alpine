@@ -65,10 +65,15 @@ RUN NGINX_VERSION="1.11.9" && \
     LUAJIT_PACKAGE_FOLDER="LuaJIT-${LUAJIT_VERSION}" && \
     LUAJIT_BASE_URL="https://github.com/LuaJIT/LuaJIT" && \
     LUAJIT_PACKAGE_URL="${LUAJIT_BASE_URL}/archive/${LUAJIT_PACKAGE_FILENAME}" && \
+    LIBCIDR_VERSION="1.2.3" && \
+    LIBCIDR_PACKAGE_FILENAME="libcidr-${LIBCIDR_VERSION}.tar.xz" && \
+    LIBCIDR_PACKAGE_FOLDER="libcidr-${LIBCIDR_VERSION}" && \
+    LIBCIDR_BASE_URL="http://www.over-yonder.net/%7Efullermd/projects/libcidr/" && \
+    LIBCIDR_PACKAGE_URL="${LIBCIDR_BASE_URL}/${LIBCIDR_PACKAGE_FILENAME}" && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++ openssl pcre zlib libmaxminddb && \
-    apk --no-cache add --quiet --virtual=.build-dependencies build-base linux-headers openssl-dev pcre-dev curl libarchive-tools zlib-dev libmaxminddb-dev && \
+    apk --no-cache add --quiet --virtual=.build-dependencies build-base coreutils linux-headers openssl-dev pcre-dev curl tar libarchive-tools xz zlib-dev libmaxminddb-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
     curl -kSL -# "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -79,6 +84,14 @@ RUN NGINX_VERSION="1.11.9" && \
       export LUAJIT_LIB="${LUA_LIB}" && \
       export LUAJIT_INC="${LUA_INC}" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
+    \
+    \
+    echo "Downloading and building libCIDR package: $LIBCIDR_PACKAGE_FILENAME" >&2 && \
+    curl -kSL -# "${LIBCIDR_PACKAGE_URL}" | tar -xJf- -C "/tmp" && \
+    cd "/tmp/${LIBCIDR_PACKAGE_FOLDER}" && \
+      make PREFIX=/usr && \
+      make PREFIX=/usr install && \
+    cd /tmp && rm -rf "/tmp/${LIBCIDR_PACKAGE_FOLDER}" && \
     \
     echo "Downloading and building nginx package: $NGINX_PACKAGE_FILENAME" >&2 && \
     curl -kSL -# "${NGINX_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
