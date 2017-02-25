@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+(cd alpine-base ; make build ; make push ; make commit ; make clean)
+(cd alpine-glibc ; make release)
+(cd alpine-abuild ; make release)
+(cd alpine-dops ; make release)
+(cd alpine-java ; make release)
+(cd alpine-orientdb ; make release)
+(cd alpine-nginx-lua ; make release)
+(cd alpine-node ; make release)
+(cd alpine-s3 ; make release)

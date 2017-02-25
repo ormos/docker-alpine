@@ -5,7 +5,7 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 LABEL "net.elvido.alpine-node"="3.5"
 
 # Node Version
-ENV  NODE_VERSION="7.5.0" \
+ENV  NODE_VERSION="7.6.0" \
      NPM_VERSION="4" \
      NPM_CONFIG_LOGLEVEL="info"
 
@@ -20,7 +20,7 @@ RUN apk --no-cache upgrade --update && \
       https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz | \
       bsdtar -xf- -C '/tmp'  && \
     \
-    echo "Budiling and installing NodeJS package" >&2 && \
+    echo "Building and installing NodeJS package" >&2 && \
     cd /tmp/node-v${NODE_VERSION} && \
     ./configure --prefix=/usr && \
     make -j$(getconf _NPROCESSORS_ONLN) && \
