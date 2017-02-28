@@ -1,0 +1,487 @@
+#!/usr/bin/env sh
+
+readonly VERSION='1.0.1'
+readonly AUTHOR='Ralf Hofmann'
+readonly CONTACT='<r.hofmann@sap.com>'
+
+readonly ROOTFS_ARCHIVE_FILE='rootfs.tgz'
+readonly ROOTFS_ARCHIVE_FOLDER="${DATA_FOLDER}"
+
+###########################################################################
+# main functionality of the script
+###########################################################################
+main()
+{
+  # initialize all global variables
+  _initialize
+
+  local RELEASE="${RELEASE:-edge}"
+  local MIRROR="${MIRROR:-http://dl-cdn.alpinelinux.org/alpine}"
+  local PACKAGES="${PACKAGES:-"alpine-base"}"
+  
+  # Process command line arguments
+  # Options followed by one colon indicate having required argument
+  OPTSTR=$(getopt -o hvr:m:SEet:cp:bu \
+                  --long help,version,release:,mirror:,stream,exclude,edge,timezone:,commands,packages:,base,unsecure \
+                  -n "${SCRIPT_NAME}" -- "$@") || _usage
+  eval set -- "$OPTSTR"
+  while true ; do
+    case "$1" in
+      '-h'|'--help')     _help            ; exit    ;;
+      '-v'|'--version')  _version         ; exit    ;;
+      '-r'|'--release')  RELEASE="$2"     ; shift 2 ;;
+      '-m'|'--mirror')   MIRROR="${2%/}"  ; shift 2 ;;
+      '-S'|'--stream')   STREAM=1         ; shift   ;;
+      '-E'|'--exclude')  OMIT_COMMUNITY=1 ; shift   ;;
+      '-e'|'--edge')     REPO_EXTRA=1     ; shift   ;;
+      '-t'|'--timezone') TIMEZONE="$2"    ; shift 2 ;;
+      '-c'|'--commands') ADD_APK_SCRIPT=1 ; shift   ;;
+      '-p'|'--packages') PACKAGES="$2"    ; shift 2 ;;
+      '-b'|'--base')     ADD_BASELAYOUT=1 ; shift   ;;
+      '-u'|'--unsecure') NO_PASSWORD=1    ; shift   ;;
+      '--')              shift            ; break   ;;
+      *)                 _usage           ;;
+    esac
+  done
+
+  if [ $# -gt 1 ]; then
+    _usage; _error_exit "too many command line parameter"
+  fi
+
+  if [ "$(id -u)" -ne 0 ]; then
+    _error_exit "root priviliges are required"
+  fi
+
+  local ROOTFS_ARCHIVE_PATH="${ROOTFS_ARCHIVE_FOLDER}/${ROOTFS_ARCHIVE_FILE}"
+  if [ $# -eq 1 ]; then
+    ROOTFS_ARCHIVE_PATH="$1"
+    shift
+  fi
+
+  [ -d "$(dirname -- "${ROOTFS_ARCHIVE_PATH}")" ] || \
+    (ROOTFS_ARCHIVE_DIR="$(dirname -- "${ROOTFS_ARCHIVE_PATH}")" ; \
+     mkdir -p "${ROOTFS_ARCHIVE_DIR}" ; \
+     ROOTFS_ARCHIVE_PARENT_DIR="$(dirname -- "${ROOTFS_ARCHIVE_DIR}")" ; \
+     chown "$(stat -c %u "${ROOTFS_ARCHIVE_PARENT_DIR}")":"$(stat -c %g "${ROOTFS_ARCHIVE_PARENT_DIR}")" "${ROOTFS_ARCHIVE_FOLDER}")
+ 
+  local ROOTFS_ARCHIVE_META="${ROOTFS_ARCHIVE_PATH}"
+  [ -f "${ROOTFS_ARCHIVE_META}" ] || ROOTFS_ARCHIVE_META="$(dirname -- "${ROOTFS_ARCHIVE_META}")"
+  # shellcheck disable=SC2155
+  local ROOTFS_ARCHIVE_UID="$(stat -c %u "${ROOTFS_ARCHIVE_META}")"
+  # shellcheck disable=SC2155
+  local ROOTFS_ARCHIVE_GID="$(stat -c %g "${ROOTFS_ARCHIVE_META}")"
+
+  (provide_rootfs_archive "${ROOTFS_ARCHIVE_PATH}" "${MIRROR}" "${RELEASE}" "${PACKAGES}" && \
+   chown "${ROOTFS_ARCHIVE_UID}":"${ROOTFS_ARCHIVE_GID}" "${ROOTFS_ARCHIVE_PATH}") || _error_exit "failed to create filesystem archive"
+
+  [ "${STREAM:-}" ] && [ -s "${ROOTFS_ARCHIVE_PATH}" ] && cat "${ROOTFS_ARCHIVE_PATH}"
+}
+
+provide_rootfs_archive()
+{
+  local ARCHIVE="$1" ; shift  
+  local MIRROR="$1"  ; shift
+  local RELEASE="$1" ; shift 
+ 
+  # shellcheck disable=SC2155
+  local ROOTFS="$(_make_temp -d)"
+
+  # conf
+  mkdir -p "${ROOTFS}/etc/apk"
+  {
+    echo "${MIRROR}/${RELEASE}/main"
+    [ "${OMIT_COMMUNITY:-}" ] || echo "${MIRROR}/${RELEASE}/community"
+    [ "${REPO_EXTRA:-}" ] && {
+      [ "${RELEASE}" = 'edge' ] || echo "@edge ${MIRROR}/edge/main"
+      echo "@testing ${MIRROR}/edge/testing"
+    }
+  } > "${ROOTFS}/etc/apk/repositories"
+
+  # mkbase
+  {
+    # shellcheck disable=SC2086
+    apk --root "${ROOTFS}" --update-cache --keys-dir /etc/apk/keys \
+        add --initdb ${*//,/ }
+    [ "${ADD_BASELAYOUT:-}" ] && \
+      apk --root "${ROOTFS}" --keys-dir /etc/apk/keys \
+        fetch --stdout alpine-base | tar -xvz -C "${ROOTFS}" etc
+    rm -f "${ROOTFS}/var/cache/apk"/*
+    [ "${TIMEZONE:-}" ] && \
+      cp "/usr/share/zoneinfo/${TIMEZONE}" "${ROOTFS}/etc/localtime"
+    [ "${NO_PASSWORD:-}" ] && \
+      sed -ie 's/^root::/root:!:/' "${ROOTFS}/etc/shadow"
+    [ "${ADD_APK_SCRIPT:-}" ] && \
+      cp /usr/sbin/apk-install "${ROOTFS}/usr/sbin/apk-install"
+  } >&2
+
+  # save to archive
+  tar -z -f "${ARCHIVE}" --numeric-owner -C "${ROOTFS}" -c .
+  
+  return 0
+}
+
+###########################################################################
+# customized functions
+###########################################################################
+_usage() {
+cat <<- -EOF- >&2
+  usage: ${SCRIPT_NAME} [-h|--help] [-v|--version] [-r|--release <release>] [-m|--mirror <mirror>] 
+            [-S|--stream] [-E|--exclude] [-e|--edge] [-t|--timezone <timezone>] [-c|--commands] 
+            [-b|--base] [-u|--unsecure] [-p|-packages <packages>] <rootfs archive>
+-EOF-
+exit 1
+}
+
+_help() {
+cat <<- -EOF-
+
+  ${SCRIPT_NAME} Version ${VERSION}
+  by ${AUTHOR} ${CONTACT}
+
+  Generate alpine image rootfs archive
+
+  ${SCRIPT_NAME} [-h|--help] [-v|--version] [-r|--release <release>] [-m|--mirror <mirror>] 
+      [-S|--stream] [-E|--exclude] [-e|--edge] [-t|--timezone <timezone>] [-c|--commands] 
+      [-b|--base] [-u|--unsecure] [-p|-packages <packages>] <rootfs archive>
+    
+    <rootfs archive>  archive as full path [${ROOTFS_ARCHIVE_FOLDER}/${ROOTFS_ARCHIVE_FILE}]
+
+  Options:
+
+    -h, --help                 Display this help message and exit.
+    -v, --version              Display version and exit.
+    -r, --release <release>    The alpine release version (e.g. 'v3.5').
+    -m, --mirror <mirror>      Alpine mirror to use as url.
+    -S, --stream               Stream archive to stdout.
+    -E, --exclude              Exclude alpine comunity respository.
+    -e, --edge                 Add alpine edge repository.
+    -t, --timezone <timezone>  Specifiy timzone to configure (e.g. 'UTC').
+    -c, --commands             Add additonal commands.
+    -b, --base                 Add base filesystem layout.
+    -u, --unsecure             Disable password for root account.
+    -p, --packages <packages>  List of packages to install (e.g. 'apk-tools').
+
+-EOF-
+}
+
+### begin -- elvido/utility : 1.1.0 / 27-FEB-2017
+###########################################################################
+# utility functions
+###########################################################################
+
+#
+# Output version information
+#
+# shellcheck disable=SC2120
+_version() {
+  _message -s -f "Version %s by %s %s\n" "${VERSION}" "${AUTHOR}" "${CONTACT}"
+}
+
+#
+# Intialize global settings
+#
+# shellcheck disable=SC2120
+_initialize()
+{
+  set -o nounset -o errexit ; [ -n "${BASH:-}" ] && set -eo pipefail ; [ -n "${_TRACE_:-}" ] && set -x
+
+  # Set file creation mask so that all files are created with 600 permissions.
+  # This will help protect temp files.
+  umask 066
+
+  # the full qualified path of the script
+  # shellcheck disable=SC2034
+  SCRIPT_PATH=$(dirname -- "$(_real_path "$0")")
+  SCRIPT_NAME=$(basename -- "$0")
+  TMP_FOLDER="${TMPDIR:-/tmp/$(id -u)}/${SCRIPT_NAME}-$$"
+
+  # make sure temp folder exists
+  [ -d "${TMP_FOLDER}" ] || mkdir -p "${TMP_FOLDER}"
+
+  # verbose level
+  _VERBOSE_=${_VERBOSE_:-0}
+
+  # Trap TERM, HUP, and INT signals and properly exit
+  trap -- '__exit_handler' EXIT
+  trap -- '__terminate_handler' TERM HUP
+  trap -- '__abort_handler' INT
+}
+
+#
+# Output formatted error or text messages
+#
+# Options:
+#   -s Script name used prefix.
+#   -e Output error message
+#   -w Output warning message
+#   -i Output information message
+#   -f Printf like format string
+#
+# Arguments:
+#   '-' read message from stdin
+#   <*> string holding text message as parameter
+#
+# shellcheck disable=SC2120
+_message()
+{
+  local IDNX CATG LEN FMT TXT_IDNX TXT_CATG TXT_PRFX TXT_MSG LEN_PRFX=0
+
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -s ) IDNX="${SCRIPT_NAME}"; shift ;;
+      -e ) CATG='ERROR'         ; shift ;;
+      -w ) CATG='WARNING'       ; shift ;;
+      -i ) CATG='INFO'          ; shift ;;
+      -f ) FMT=$2 ; shift       ; shift ;;
+      -- ) break                ; shift ;;
+      * )  break                          ;;
+    esac
+  done
+
+  if [ -n "${IDNX:-}" ]; then
+    TXT_IDNX="$(printf '%s - ' "$IDNX")"
+    LEN_PRFX=$((${#IDNX} + 3))
+    TXT_PRFX="$TXT_IDNX"
+  fi
+  if [ -n "${CATG:-}" ]; then
+    TXT_CATG="$(printf '%s: ' "$CATG")"
+    LEN_PRFX=$((${#CATG} + 2))
+    TXT_PRFX="${TXT_PRFX:-}$TXT_CATG"
+  fi
+
+  # check if we should indent
+  [ "${LEN:-0}" -lt $LEN_PRFX ] || LEN_PRFX=${LEN:-0}
+
+  # format the output using the format string or default
+  # shellcheck disable=SC2059
+  if [ -n "${FMT:-}" ]; then
+    if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+      TXT_MSG="$(printf "${FMT}" "$(cat -)")"
+    else
+      TXT_MSG="$(printf "${FMT}" "$@")"
+    fi
+  else
+    if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+      TXT_MSG="$(cat -)"
+    else
+      TXT_MSG="$(printf "$@")"
+    fi
+  fi
+
+  printf '%*s%s\n' "$LEN_PRFX" "${TXT_PRFX:-}" "$TXT_MSG"
+}
+
+#
+# Returns string indented by 4 spaces
+#
+# Arguments:
+#   '-' read string from stdin
+#   <*> string as parameter
+#
+# shellcheck disable=SC2120
+_indent()
+{
+  local INDENT='    '
+
+  if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+    sed -e "s/^/${INDENT}/g"
+  else
+    # shellcheck disable=SC2001
+    echo "$@" | sed -e "s/^/${INDENT}/g"
+  fi
+}
+
+#
+# Returns lowercase string
+#
+# Arguments:
+#   '-' read string from stdin
+#   <*> string as parameter
+#
+# shellcheck disable=SC2120
+_tolower()
+{
+  if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+    tr '[:upper:]' '[:lower:]'
+  else
+    echo "$@" | tr '[:upper:]' '[:lower:]'
+  fi
+}
+
+#
+# Returns uppercase string
+#
+# Arguments:
+#   '-' read string from stdin
+#   <*> string as parameter
+#
+# shellcheck disable=SC2120
+_toupper()
+{
+  if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+    tr '[:lower:]' '[:upper:]'
+  else
+    echo "$@" | tr '[:lower:]' '[:upper:]'
+  fi
+}
+
+#
+# Trims any leading and trailing tabs or spaces
+#
+# Arguments:
+#   '-' read string from stdin
+#   <*> string as parameter
+#
+# shellcheck disable=SC2120
+_trim()
+{
+  # local VAR="$@"
+  # VAR="${VAR#"${VAR%%[![:space:]]*}"}" # remove leading whitespace characters
+  # VAR="${VAR%"${VAR##*[![:space:]]}"}" # remove trailing whitespace characters
+  # echo "${VAR}"
+
+  if [ $# -eq 0 ] || ([ $# -eq 1 ] && [ "$1" = '-' ]); then
+    sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//'
+  else
+    echo "$@" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//'
+  fi
+}
+
+#
+# Function for outputting a time stamp
+#
+# shellcheck disable=SC2120
+_time_stamp()
+{
+  date -u +%Y-%m-%dT%H:%M:%S%z
+}
+
+#
+# Function for exit due to fatal program error
+#
+# Arguments:
+#   '-' read message from stdin
+#   <1> string holding text message as parameter
+#   <2> exit code
+#
+# shellcheck disable=SC2120
+_error_exit()
+{
+  local MESSAGE
+
+  if [ "${1:-}" = '-' ]; then
+    MESSAGE="$(cat -)"
+  else
+    MESSAGE="${1:-}"
+  fi
+
+  _message -s -e "${MESSAGE:-Unknown Error}"  >&2
+
+  exit "${2:-1}"
+}
+
+#
+# Function to perform action on script exit
+#
+__exit_handler()
+{
+  __do_cleanup
+}
+
+#
+# Function to perform exit if termination signal is trapped
+#
+__terminate_handler()
+{
+  _message -s -w "Terminated" >&2
+
+  exit
+}
+
+#
+# Function to perform exit if interrupt signal is trapped
+#
+ __abort_handler()
+{
+  _message -s -w "Aborted by user" >&2
+
+  exit
+}
+
+#
+# Function to remove temporary files and other housekeeping
+#
+__do_cleanup()
+{
+  # remove the temp folder
+  [ "${_VERBOSE_:-0}" -lt 3 ] && [ -d "${TMP_FOLDER}" ] && \
+    (rm -rf "${TMP_FOLDER}" >/dev/null 2>&1 || :)
+
+  return 0
+}
+
+# Function to create a temporary files or folder
+#
+# Options:
+#   -d Create directory instead og file
+#
+# Arguments:
+#   <1> Name mask pattern to use
+#
+# shellcheck disable=SC2120
+_make_temp()
+{
+  local TMPOPTS='-p'
+
+  if [ "${1:-}" = '-d' ]; then
+    TMPOPTS="-d ${TMPOPTS}" ; shift;
+  fi
+  local TMPMASK="${1:-${SCRIPT_NAME}-XXXXXX}"
+
+  # shellcheck disable=SC2086
+  mktemp ${TMPOPTS} "${TMP_FOLDER}" "${TMPMASK}"
+}
+
+# Function to retrieve a full filesystem path
+#
+# Arguments:
+#   <1> Absolute or relative filesystem path
+#
+# shellcheck disable=SC2120
+_real_path()
+{
+  local PTH="${1:-.}"
+ 
+  if [ -d "$(dirname -- "${PTH}")" ]; then  
+    # shellcheck disable=SC2155
+    local _readlink="$(command -v greadlink || command -v readlink || :)"
+    ([ "${_readlink}" ] && "${_readlink}" -f "${PTH}") || \
+    ([ -d "${PTH}" ] && (cd "${PTH}"; pwd)) || \
+    (cd "$(dirname -- "${PTH}")"; case "${PWD}" in */) echo "${PWD}$(basename -- "${PTH}")"  ;; 
+                                                    *) echo "${PWD}/$(basename -- "${PTH}")" ;; 
+                              esac )
+  else
+    case "${PTH}" in /*) echo "${PTH}" ;; *) echo "${PWD}/${PTH}" ;; esac | \
+      (
+        local PTS ; IFS=/
+        # shellcheck disable=SC2013
+        for P in $(cat); do
+          case "${P}" in
+            ''|'.') ;;
+              '..') PTS="$(dirname -- "${PTS}")" ;;
+                 *) case "${PTS}" in */) PTS="${PTS}${P}"  ;; 
+                                      *) PTS="${PTS}/${P}" ;; 
+                    esac ;;
+          esac
+        done
+        echo "${PTS:-}"
+      )
+  fi
+}
+
+###########################################################################
+# Execution starts here
+###########################################################################
+main "$@"
+
+### end -- elvido/utility : 1.1.0 / 27-FEB-2017

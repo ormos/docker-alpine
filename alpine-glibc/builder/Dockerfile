@@ -1,16 +1,21 @@
-FROM elvido/alpine:edge
+FROM multiarch/ubuntu-debootstrap:amd64-slim
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-ENV PREFIX_DIR /usr/glibc-compat \
-    GLIBC_VERSION 2.23
+ENV GLIBC_VERSION='2.25' \
+    GLIBC_ARCH='x86_64'\
+    GLIBC_PREFIX='/usr/glibc-compat' \
+    DATA_FOLDER='/mnt/data'
 
-RUN apk --no-cache upgrade --update && \
-    apk --no-cache add --quiet ca-certificates bash shadow coreutils findutils grep gawk perl curl openssl && \
-    apk --no-cache add --quiet build-base linux-headers gettext-dev zlib-dev binutils gcc make texinfo libarchive-tools
+RUN apt-get -q update && \
+	apt-get -qy install build-essential curl openssl gawk file && \
+    apt-get -qy autoclean ; apt-get -qy clean && \
+    \
+    mkdir -p "${DATA_FOLDER}"
 
-COPY scripts/configparams /glibc-build/configparams
-COPY scripts/glibc-builder /glibc-builder
+COPY rootfs /
 
-# ENTRYPOINT ["/glibc-builder"]
-# CMD ["-h"]
+VOLUME ["${DATA_FOLDER}"]
+
+ENTRYPOINT ["/usr/sbin/glibc-builder"]
+CMD ["-h"]

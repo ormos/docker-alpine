@@ -4,16 +4,17 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 
 LABEL "net.elvido.alpine-java"="3.5"
 
-# Java Version and other ENV
-ENV JAVA_VERSION_MAJOR=8 \
-    JAVA_VERSION_MINOR=121 \
-    JAVA_VERSION_BUILD=13 \
-    JAVA_PACKAGE_FOLDER=e9e7ea248e2c4826b92b3f075a80e441 \
-    JAVA_PACKAGE=jdk \
-    JAVA_JCE=unlimited \
-    JAVA_HOME=/usr/lib/jvm/default-jvm
+# Java home
+ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
-RUN apk --no-cache upgrade --update && \
+RUN JAVA_VERSION_MAJOR=8 && \
+    JAVA_VERSION_MINOR=121 && \
+    JAVA_VERSION_BUILD=13 && \
+    JAVA_PACKAGE_FOLDER=e9e7ea248e2c4826b92b3f075a80e441 && \
+    JAVA_PACKAGE=jdk && \
+    JAVA_JCE=unlimited && \
+    \
+    apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
     apk --no-cache add --quiet --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
     \

@@ -12,7 +12,13 @@ REPO = alpine-glibc
 NAME = alpine-glibc
 INSTANCE = default
 
-.PHONY: build push shell run start stop rm release tag $(TAGS)
+GLIBC_VERSION ?= 2.25
+GLIBC_PREFIX  ?= /usr/glibc-compat
+GLIBC_ARCH	  ?= x86_64
+GLIBC_RELEASE ?= glibc-releases/alpine-glibc-$(GLIBC_VERSION)-$(GLIBC_ARCH).tgz
+GLIBC_BUILDER = $(NS)/glibc-builder
+
+.PHONY: build push shell run start stop rm release tag $(TAGS) build-glibc
 
 default: build
 
@@ -45,3 +51,9 @@ tag: $(TAGS)
 
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
+
+build-glibc:
+	docker build -t $(GLIBC_BUILDER) builder
+	docker run --rm $(GLIBC_BUILDER) -S -r $(GLIBC_VERSION) -a $(GLIBC_ARCH) -p $(GLIBC_PREFIX) \
+        > $(GLIBC_RELEASE)
+	docker rmi $(GLIBC_BUILDER)

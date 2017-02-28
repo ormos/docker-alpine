@@ -10,13 +10,13 @@ endif
 default: build
 
 build:
-	./build-image
+	./build-images build
 
 push:
-	./build-image push
+	./build-images push
 
 commit:
-	./build-image commit
+	./build-images commit
 
 clean:
-	./build-image cleanup
+	./build-images cleanup

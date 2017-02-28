@@ -2,10 +2,14 @@ FROM alpine:3.5
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
+ENV DATA_FOLDER="/mnt/data"
+
 RUN apk --no-cache upgrade --update && \
-    apk --no-cache add --quiet ca-certificates bash tzdata
+    apk --no-cache add --quiet ca-certificates tzdata && \
+    \
+    mkdir -p "${DATA_FOLDER}"
 
-COPY scripts/mkimage-alpine scripts/apk-install /
+COPY rootfs /
 
-ENTRYPOINT ["/mkimage-alpine"]
+ENTRYPOINT ["/usr/sbin/mkimage-alpine"]
 CMD ["-h"]

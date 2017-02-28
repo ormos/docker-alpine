@@ -8,4 +8,5 @@
 (cd alpine-orientdb ; make release)
 (cd alpine-nginx-lua ; make release)
 (cd alpine-node ; make release)
+(cd alpine-openui5 ; make release)
 (cd alpine-s3 ; make release)
