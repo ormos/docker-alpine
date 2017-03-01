@@ -2,9 +2,9 @@ FROM elvido/alpine-glibc
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-java"="3.5"
+LABEL "net.elvido.alpine-java-oracle"="3.5"
 
-# Java home
+# java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=8 && \
@@ -16,7 +16,7 @@ RUN JAVA_VERSION_MAJOR=8 && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
-    apk --no-cache add --quiet --virtual=.build-dependencies libstdc++ curl bash libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies curl libarchive-tools && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
@@ -38,10 +38,7 @@ RUN JAVA_VERSION_MAJOR=8 && \
       rm -rf /tmp/UnlimitedJCEPolicyJDK8; \
     fi && \
     \
-    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
-    sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=30/ "${JAVA_HOME}/jre/lib/security/java.security" && \
-    ln -s "${JAVA_HOME}/bin/"* "/usr/bin/" || true && \
-    \
+    # remove stuff we do not need
     rm -rf ${JAVA_HOME}/*src.zip \
            ${JAVA_HOME}/lib/missioncontrol \
            ${JAVA_HOME}/lib/visualvm \
@@ -73,6 +70,11 @@ RUN JAVA_VERSION_MAJOR=8 && \
            ${JAVA_HOME}/jre/lib/ext/jfxrt.jar \
            ${JAVA_HOME}/jre/lib/oblique-fonts \
            ${JAVA_HOME}/jre/lib/plugin.jar && \
+    \
+    # adjust some settings
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \
+    sed -i s/#networkaddress.cache.ttl=-1/networkaddress.cache.ttl=30/ "${JAVA_HOME}/jre/lib/security/java.security" && \
+    ln -s "${JAVA_HOME}/bin/"* "/usr/bin/" || : && \
     \
     echo "Cleaning up..." >&2 && \
     apk del --quiet --purge .build-dependencies && \

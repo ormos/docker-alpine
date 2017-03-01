@@ -1,17 +1,11 @@
 #!/usr/bin/env sh
 
-readonly VERSION='1.0.1'
+readonly VERSION='1.0.0'
 readonly AUTHOR='Ralf Hofmann'
 readonly CONTACT='<r.hofmann@sap.com>'
 
-readonly ALPINE_BASE_IMAGE='alpine:3.5'
-
-readonly DEFAULT_BUILDER_IMAGE='elvido/alpine-builder'
 readonly DEFAULT_RELEASES_FOLDER='./releases'
-
-readonly BUILDER_FOLDER='builder'
-readonly BUILDER_OPTIONS='options'
-readonly ROOTFS_ARCHIVE='rootfs.tgz'
+readonly DEFAULT_OPTIONS_FILE='options'
 
 ###########################################################################
 # main functionality of the script
@@ -22,19 +16,17 @@ main()
   _initialize
 
   RELEASES="${DEFAULT_RELEASES_FOLDER}"
-  BUILDER_IMAGE="${DEFAULT_BUILDER_IMAGE}"
   
   # Process command line arguments
   # Options followed by one colon indicate having required argument
-  OPTSTR=$(getopt -o hvr:i: \
-                  --long help,version,releases:,image: \
+  OPTSTR=$(getopt -o hvr: \
+                  --long help,version,releases: \
                   -n "${SCRIPT_NAME}" -- "$@") || _usage
   eval set -- "$OPTSTR"
   while true ; do
     case "$1" in
       '-h'|'--help')     _help              ; exit    ;;
       '-v'|'--version')  _version           ; exit    ;;
-      '-i'|'--image')    BUILDER_IMAGE="$2" ; shift 2 ;;
       '-r'|'--releases') RELEASES="$2"      ; shift 2 ;;
       '--')              shift              ; break   ;;
       *)                 _usage             ;;
@@ -49,7 +41,6 @@ main()
   
   local CMD="$1"
   case "${CMD}" in
-    commit)	 shift; commit  "$@";;
     push)	   shift; push    "$@";;
     build)	 shift; build   "$@";;
     cleanup) shift; cleanup "$@";;
@@ -59,9 +50,7 @@ main()
 
 build() 
 {
-  docker build --no-cache --squash -t "${BUILDER_IMAGE}" "${BUILDER_FOLDER}"
-
-  local OPTIONS_FILES="${*:-${RELEASES}/**/${BUILDER_OPTIONS}}"
+  local OPTIONS_FILES="${*:-${RELEASES}/**/${DEFAULT_OPTIONS_FILE}}"
 
   for OPTIONS_FILE in ${OPTIONS_FILES}
   do
@@ -70,10 +59,7 @@ build()
       . "${OPTIONS_FILE}"
       # shellcheck disable=SC2155
       local RELEASE_DIR="$(dirname -- "${OPTIONS_FILE}")"
-      : "${TAGS:?}" "${BUILD_OPTIONS:?}" "${RELEASE:?}"
-      # shellcheck disable=SC2086
-      docker run -e "_TRACE_=${_TRACE_:-}" --rm "${BUILDER_IMAGE}" -S ${BUILD_OPTIONS} \
-        > "${RELEASE_DIR}/${ROOTFS_ARCHIVE}"
+      : "${TAGS:?}"
 
       for TAG in ${TAGS} 
       do
@@ -83,31 +69,9 @@ build()
   done
 }
 
-commit() 
-{
-  # shellcheck disable=SC2155
-  local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  : "${CURRENT_BRANCH:?}"
-
-  local ROOTFS_FILES="${*:-${RELEASES}/**/${ROOTFS_ARCHIVE}}"
-  for ROOTFS_FILE in ${ROOTFS_FILES} 
-  do
-    # shellcheck disable=SC2155
-    local RELEASE="$(basename -- "$(dirname -- "${ROOTFS_FILE}")")"
-    # shellcheck disable=SC2155
-    local RELEASE_DIR="$(dirname -- "${ROOTFS_FILE}")"
-    : "${RELEASE:?}" "${RELEASE_DIR:?}"
-    git checkout -B "rootfs/${RELEASE}" "${CURRENT_BRANCH}"
-    git add -f -- "${ROOTFS_FILE}"
-    git commit -m "release image version ${RELEASE}"
-  done
-  git push -f origin 'refs/heads/rootfs/*'
-  git checkout "${CURRENT_BRANCH}"
-}
-
 push() 
 {
-  local OPTIONS_FILES="${*:-${RELEASES}/**/${BUILDER_OPTIONS}}"
+  local OPTIONS_FILES="${*:-${RELEASES}/**/${DEFAULT_OPTIONS_FILE}}"
 
   for OPTIONS_FILE in ${OPTIONS_FILES}
   do
@@ -128,8 +92,6 @@ push()
 
 cleanup() 
 {
-  docker rmi "${BUILDER_IMAGE}" >/dev/null 2>&1  || :
-  docker rmi "${ALPINE_BASE_IMAGE}" >/dev/null 2>&1 || :
   (docker images -f 'dangling=true' -q | xargs docker rmi) >/dev/null 2>&1 || :
 }
 
@@ -138,7 +100,7 @@ cleanup()
 ###########################################################################
 _usage() {
 cat <<- -EOF- >&2
-  usage: ${SCRIPT_NAME} [-h|--help] [-v|--version] [-i|--image <image>] [-r|--releases <releases>]  
+  usage: ${SCRIPT_NAME} [-h|--help] [-v|--version] [-r|--releases <releases>]  
             build|push|commit|cleanup
 -EOF-
 exit 1
@@ -150,22 +112,20 @@ cat <<- -EOF-
   ${SCRIPT_NAME} Version ${VERSION}
   by ${AUTHOR} ${CONTACT}
 
-  Generate alpine base images
+  Generate alpine java base images
 
-  ${SCRIPT_NAME} [-h|--help] [-v|--version] [-i|--image <image>] [-r|--releases <releases>] 
+  ${SCRIPT_NAME} [-h|--help] [-v|--version] [-r|--releases <releases>] 
     build|push|commit|cleanup
 
   Commands:
     build     Build the root filesystem image.
     push      Push the docker images to repository.
-    commit    Commit local changes to git repository.
     cleanup   Clean up the intermediated files.
 
   Options:
 
     -h, --help                Display this help message and exit.
     -v, --version             Display version and exit.
-    -i, --image <image>       The docker image to use for building ['${DEFAULT_BUILDER_IMAGE}'].
     -r, --releases <releases> Folder storing alpine docker releases ['${DEFAULT_RELEASES_FOLDER}'].
 
 -EOF-

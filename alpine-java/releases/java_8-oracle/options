@@ -1,0 +1,2 @@
+TAGS='elvido/alpine-java-oracle:3.5 elvido/alpine-java-oracle:latest elvido/alpine-java:3.5 elvido/alpine-java:latest'
+PUSH_IMAGE='true'

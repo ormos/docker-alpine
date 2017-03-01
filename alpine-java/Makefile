@@ -12,15 +12,15 @@ REPO = alpine-java
 NAME = alpine-java
 INSTANCE = default
 
-.PHONY: build push shell run start stop rm release tag $(TAGS)
+.PHONY: build push shell run start stop rm release
 
 default: build
 
 build:
-	docker build -t $(NS)/$(REPO):$(VERSION) .
+	./build-images build
 
 push:
-	docker push $(NS)/$(REPO):$(VERSION)
+	./build-images push
 
 shell:
 	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/sh
@@ -37,11 +37,4 @@ stop:
 rm:
 	docker rm $(NAME)-$(INSTANCE)
 
-release: build
-	@make --no-print-directory tag -e VERSION="$(VERSION)" -e TAGS="$(TAGS)"
-	@make --no-print-directory push -e VERSION="$(VERSION)"
-
-tag: $(TAGS)
-
-$(TAGS):
-	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
+release: build push
