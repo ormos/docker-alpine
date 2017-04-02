@@ -5,7 +5,7 @@ MAINTAINER elvido <ralf.hofmann@elvido.net>
 LABEL "net.elvido.alpine-node"="3.5"
 
 # Node Version
-ENV  NODE_VERSION="7.6.0" \
+ENV  NODE_VERSION="7.8.0" \
      NPM_VERSION="4" \
      NPM_CONFIG_LOGLEVEL="info"
 
