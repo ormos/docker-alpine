@@ -10,7 +10,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.11.10" && \
+RUN NGINX_VERSION="1.11.12" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
@@ -73,7 +73,7 @@ RUN NGINX_VERSION="1.11.10" && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++ openssl pcre zlib libmaxminddb && \
-    apk --no-cache add --quiet --virtual=.build-dependencies build-base coreutils linux-headers openssl-dev pcre-dev curl tar libarchive-tools xz zlib-dev libmaxminddb-dev && \
+    apk --no-cache add --quiet --virtual=.build-dependencies build-base coreutils patch linux-headers openssl-dev pcre-dev curl tar libarchive-tools xz zlib-dev libmaxminddb-dev && \
     \
     echo "Downloading and building LuaJIT package: $LUAJIT_PACKAGE_FILENAME" >&2 && \
     curl -kSL -# "${LUAJIT_PACKAGE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -85,6 +85,8 @@ RUN NGINX_VERSION="1.11.10" && \
       export LUAJIT_INC="${LUA_INC}" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
     \
+    echo "Apply temporary patch for LuaJIT (${LUAJIT_PACKAGE_VERSION}) upstream" >&2 && \    
+    sed -ie 's/#define LUA_VERSION_NUM	501/#define LUA_VERSION_NUM	502/g' "${LUA_INC}/lua.h" && \
     \
     echo "Downloading and building libCIDR package: $LIBCIDR_PACKAGE_FILENAME" >&2 && \
     curl -kSL -# "${LIBCIDR_PACKAGE_URL}" | tar -xJf- -C "/tmp" && \
@@ -107,6 +109,14 @@ RUN NGINX_VERSION="1.11.10" && \
     curl -kSL -# "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     echo "Downloading and building openresty header package: $OPENRESTY_HEADER_MODULE_FOLDER" >&2 && \
     curl -kSL -# "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    \
+    echo "Apply temporary patches for nginx 1.11.12" >&2 && \    
+    curl -kSL -# https://raw.githubusercontent.com/macports/macports-ports/master/www/nginx/files/patch-src-ngx_http_lua_headers.c.diff | patch -p1 -d "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}" && \
+    sed -ie 's/luaL_getn/(int)lua_objlen/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/src/ngx_http_lua_headers.c" && \
+    curl -kSL -# https://raw.githubusercontent.com/defanator/echo-nginx-module/d16babcc09050966f5055df41572429bd84d811a/src/ngx_http_echo_request_info.c >"/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}/src/ngx_http_echo_request_info.c" && \
+    sed -ie 's/#if LUA_VERSION_NUM != 501/#if LUA_VERSION_NUM < 501/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/config" && \
+    sed -ie 's/#if LUA_VERSION_NUM != 501/#if LUA_VERSION_NUM < 501/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/src/ngx_http_lua_common.h" && \
+    \
     cd "/tmp/${NGINX_PACKAGE_FOLDER}" && \
       ./configure \
         --prefix=/etc/nginx \
