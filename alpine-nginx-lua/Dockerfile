@@ -10,7 +10,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.11.12" && \
+RUN NGINX_VERSION="1.11.13" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
@@ -47,6 +47,14 @@ RUN NGINX_VERSION="1.11.12" && \
     OPENRESTY_CORE_MODULE_VERSION="master" && \
     OPENRESTY_CORE_MODULE_FOLDER="${OPENRESTY_CORE_MODULE}-${OPENRESTY_CORE_MODULE_VERSION}" && \
     OPENRESTY_CORE_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_CORE_MODULE}/archive/${OPENRESTY_CORE_MODULE_VERSION}.zip" && \
+    OPENRESTY_STRING_MODULE="lua-resty-string" && \
+    OPENRESTY_STRING_MODULE_VERSION="master" && \
+    OPENRESTY_STRING_MODULE_FOLDER="${OPENRESTY_STRING_MODULE}-${OPENRESTY_STRING_MODULE_VERSION}" && \
+    OPENRESTY_STRING_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_STRING_MODULE}/archive/${OPENRESTY_STRING_MODULE_VERSION}.zip" && \
+    OPENRESTY_LOCK_MODULE="lua-resty-lock" && \
+    OPENRESTY_LOCK_MODULE_VERSION="master" && \
+    OPENRESTY_LOCK_MODULE_FOLDER="${OPENRESTY_LOCK_MODULE}-${OPENRESTY_LOCK_MODULE_VERSION}" && \
+    OPENRESTY_LOCK_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_LOCK_MODULE}/archive/${OPENRESTY_LOCK_MODULE_VERSION}.zip" && \
     OPENRESTY_LRU_MODULE="lua-resty-lrucache" && \
     OPENRESTY_LRU_MODULE_VERSION="master" && \
     OPENRESTY_LRU_MODULE_FOLDER="${OPENRESTY_LRU_MODULE}-${OPENRESTY_LRU_MODULE_VERSION}" && \
@@ -55,6 +63,10 @@ RUN NGINX_VERSION="1.11.12" && \
     OPENRESTY_DNS_MODULE_VERSION="master" && \
     OPENRESTY_DNS_MODULE_FOLDER="${OPENRESTY_DNS_MODULE}-${OPENRESTY_DNS_MODULE_VERSION}" && \
     OPENRESTY_DNS_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_DNS_MODULE}/archive/${OPENRESTY_DNS_MODULE_VERSION}.zip" && \
+    OPENRESTY_TRAFFIC_MODULE="lua-resty-limit-traffic" && \
+    OPENRESTY_TRAFFIC_MODULE_VERSION="master" && \
+    OPENRESTY_TRAFFIC_MODULE_FOLDER="${OPENRESTY_TRAFFIC_MODULE}-${OPENRESTY_TRAFFIC_MODULE_VERSION}" && \
+    OPENRESTY_TRAFFIC_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_TRAFFIC_MODULE}/archive/${OPENRESTY_TRAFFIC_MODULE_VERSION}.zip" && \
     OPENRESTY_JSON_MODULE="lua-cjson" && \
     OPENRESTY_JSON_MODULE_VERSION="master" && \
     OPENRESTY_JSON_MODULE_FOLDER="${OPENRESTY_JSON_MODULE}-${OPENRESTY_JSON_MODULE_VERSION}" && \
@@ -110,10 +122,7 @@ RUN NGINX_VERSION="1.11.12" && \
     echo "Downloading and building openresty header package: $OPENRESTY_HEADER_MODULE_FOLDER" >&2 && \
     curl -kSL -# "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     \
-    echo "Apply temporary patches for nginx 1.11.12" >&2 && \    
-    curl -kSL -# https://raw.githubusercontent.com/macports/macports-ports/master/www/nginx/files/patch-src-ngx_http_lua_headers.c.diff | patch -p1 -d "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}" && \
-    sed -ie 's/luaL_getn/(int)lua_objlen/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/src/ngx_http_lua_headers.c" && \
-    curl -kSL -# https://raw.githubusercontent.com/defanator/echo-nginx-module/d16babcc09050966f5055df41572429bd84d811a/src/ngx_http_echo_request_info.c >"/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}/src/ngx_http_echo_request_info.c" && \
+    echo "Apply temporary patches for using LuaJIT upstream with nginx 1.11.13" >&2 && \    
     sed -ie 's/#if LUA_VERSION_NUM != 501/#if LUA_VERSION_NUM < 501/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/config" && \
     sed -ie 's/#if LUA_VERSION_NUM != 501/#if LUA_VERSION_NUM < 501/g' "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}/src/ngx_http_lua_common.h" && \
     \
@@ -197,6 +206,18 @@ RUN NGINX_VERSION="1.11.12" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_CORE_MODULE_FOLDER}" && \
     \
+    echo "Downloading and installing nginx LUA package: $OPENRESTY_STRING_MODULE" >&2 && \
+    curl -kSL -# "${OPENRESTY_STRING_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    cd "/tmp/${OPENRESTY_STRING_MODULE_FOLDER}" && \
+      make install PREFIX=/usr && \
+    cd /tmp && rm -rf "/tmp/${OPENRESTY_STRING_MODULE_FOLDER}" && \
+    \
+    echo "Downloading and installing nginx LUA package: $OPENRESTY_LOCK_MODULE" >&2 && \
+    curl -kSL -# "${OPENRESTY_LOCK_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    cd "/tmp/${OPENRESTY_LOCK_MODULE_FOLDER}" && \
+      make install PREFIX=/usr && \
+    cd /tmp && rm -rf "/tmp/${OPENRESTY_STRING_MODULE_FOLDER}" && \
+    \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_LRU_MODULE" >&2 && \
     curl -kSL -# "${OPENRESTY_LRU_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     cd "/tmp/${OPENRESTY_LRU_MODULE_FOLDER}" && \
@@ -208,6 +229,12 @@ RUN NGINX_VERSION="1.11.12" && \
     cd "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
       make install PREFIX=/usr && \
     cd /tmp && rm -rf "/tmp/${OPENRESTY_DNS_MODULE_FOLDER}" && \
+    \
+    echo "Downloading and installing nginx LUA package: $OPENRESTY_TRAFFIC_MODULE" >&2 && \
+    curl -kSL -# "${OPENRESTY_TRAFFIC_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    cd "/tmp/${OPENRESTY_TRAFFIC_MODULE_FOLDER}" && \
+      make install PREFIX=/usr && \
+    cd /tmp && rm -rf "/tmp/${OPENRESTY_TRAFFIC_MODULE_FOLDER}" && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_JSON_MODULE" >&2 && \
     curl -kSL -# "${OPENRESTY_JSON_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
