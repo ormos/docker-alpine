@@ -39,6 +39,10 @@ RUN NGINX_VERSION="1.12.0" && \
     OPENRESTY_ECHO_MODULE_VERSION="master" && \
     OPENRESTY_ECHO_MODULE_FOLDER="${OPENRESTY_ECHO_MODULE}-${OPENRESTY_ECHO_MODULE_VERSION}" && \
     OPENRESTY_ECHO_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_ECHO_MODULE}/archive/${OPENRESTY_ECHO_MODULE_VERSION}.zip" && \
+    OPENRESTY_MISC_MODULE="set-misc-nginx-module" && \
+    OPENRESTY_MISC_MODULE_VERSION="master" && \
+    OPENRESTY_MISC_MODULE_FOLDER="${OPENRESTY_MISC_MODULE}-${OPENRESTY_MISC_MODULE_VERSION}" && \
+    OPENRESTY_MISC_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_MISC_MODULE}/archive/${OPENRESTY_MISC_MODULE_VERSION}.zip" && \
     OPENRESTY_HEADER_MODULE="headers-more-nginx-module" && \
     OPENRESTY_HEADER_MODULE_VERSION="master" && \
     OPENRESTY_HEADER_MODULE_FOLDER="${OPENRESTY_HEADER_MODULE}-${OPENRESTY_HEADER_MODULE_VERSION}" && \
@@ -119,6 +123,8 @@ RUN NGINX_VERSION="1.12.0" && \
     curl -kSL -# "${OPENRESTY_UPSTREAM_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     echo "Downloading and building openresty echo package: $OPENRESTY_ECHO_MODULE_FOLDER" >&2 && \
     curl -kSL -# "${OPENRESTY_ECHO_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
+    echo "Downloading and building openresty set-misc package: $OPENRESTY_MISC_MODULE_FOLDER" >&2 && \
+    curl -kSL -# "${OPENRESTY_MISC_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     echo "Downloading and building openresty header package: $OPENRESTY_HEADER_MODULE_FOLDER" >&2 && \
     curl -kSL -# "${OPENRESTY_HEADER_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
     \
@@ -173,6 +179,7 @@ RUN NGINX_VERSION="1.12.0" && \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_ECHO_MODULE_FOLDER}" \
+        --add-dynamic-module="../${OPENRESTY_MISC_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_HEADER_MODULE_FOLDER}" \
       && \
       mkdir -p "${DEPLOYMENT_FOLDER}/run/"    && \
@@ -187,6 +194,7 @@ RUN NGINX_VERSION="1.12.0" && \
       "/tmp/${OPENRESTY_LUA_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_UPSTREAM_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_ECHO_MODULE_FOLDER}" \
+      "/tmp/${OPENRESTY_MISC_MODULE_FOLDER}" \
       "/tmp/${OPENRESTY_HEADER_MODULE_FOLDER}" \
     && \
     rm -f "${DEPLOYMENT_FOLDER}/config/"fastcgi* \
