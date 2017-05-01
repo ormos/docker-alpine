@@ -207,6 +207,7 @@ RUN NGINX_VERSION="1.12.0" && \
     sed -i -e "s#root[[:blank:]]\+html;#root ${DEPLOYMENT_FOLDER}/html;#g" "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
     sed -i -e 's/#access_log[[:blank:]]\+logs\/access.log[[:blank:]]\+main;/access_log \/dev\/stdout;/' -e 's/#error_log[[:blank:]]\+logs\/error.log[[:blank:]]\+notice;/error_log \/dev\/stderr notice;/' "${DEPLOYMENT_FOLDER}/config/nginx.conf" && \
     adduser -D nginx && \
+    chown -R nginx:nginx ${DEPLOYMENT_FOLDER} && \
     \
     echo "Downloading and installing nginx LUA package: $OPENRESTY_CORE_MODULE" >&2 && \
     curl -kSL -# "${OPENRESTY_CORE_MODULE_URL}" | bsdtar -xf- -C "/tmp" && \
@@ -261,8 +262,6 @@ RUN NGINX_VERSION="1.12.0" && \
     rm -rf /tmp/* /var/cache/apk/*
 
 COPY rootfs /
-
-VOLUME ["${DEPLOYMENT_FOLDER}"]
 
 EXPOSE 80 443
 
