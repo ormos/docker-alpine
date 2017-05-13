@@ -109,6 +109,7 @@ RUN NGINX_VERSION="1.12.0" && \
     cd "/tmp/${LIBCIDR_PACKAGE_FOLDER}" && \
       make PREFIX=/usr && \
       make PREFIX=/usr install && \
+    ln -sf /usr/bin/luajit-2.1.0-beta3 /usr/bin/luajit && \
     cd /tmp && rm -rf "/tmp/${LIBCIDR_PACKAGE_FOLDER}" && \
     \
     echo "Downloading and building nginx package: $NGINX_PACKAGE_FILENAME" >&2 && \
