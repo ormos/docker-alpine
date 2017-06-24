@@ -2,7 +2,7 @@ FROM elvido/alpine:edge
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-minio"="3.5"
+LABEL "net.elvido.alpine-minio"="3.6"
 
 ENV GOPATH /go
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
@@ -41,6 +41,6 @@ EXPOSE 9000
 
 WORKDIR $GOPATH
 
-#ENTRYPOINT ["minio"]
-#CMD ["-h"]
+ENTRYPOINT ["minio"]
+CMD ["-h"]
 

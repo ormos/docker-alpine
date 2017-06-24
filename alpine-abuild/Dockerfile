@@ -2,7 +2,7 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-abuild"="3.5"
+LABEL "net.elvido.alpine-abuild"="3.6"
 
 ENV BUILDER_HOME=/home/builder
 ENV PACKAGER_PRIVATE_KEY_NAME=packager.key

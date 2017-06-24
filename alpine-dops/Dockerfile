@@ -2,7 +2,7 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-dops"="3.5"
+LABEL "net.elvido.alpine-dops"="3.6"
 
 ENV WORK_FOLDER="/dops"
 

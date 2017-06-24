@@ -2,7 +2,7 @@ FROM elvido/alpine-glibc
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-java-sap"="3.5"
+LABEL "net.elvido.alpine-java-sap"="3.6"
 
 # Java home
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm

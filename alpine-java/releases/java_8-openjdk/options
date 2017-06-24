@@ -1,2 +1,2 @@
-TAGS='elvido/alpine-java-openjdk:3.5 elvido/alpine-java-openjdk:latest'
+TAGS='elvido/alpine-java-openjdk:3.6 elvido/alpine-java-openjdk:latest'
 PUSH_IMAGE='true'

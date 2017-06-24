@@ -2,7 +2,7 @@ FROM elvido/alpine
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-LABEL "net.elvido.alpine-nginx-lua"="3.5"
+LABEL "net.elvido.alpine-nginx-lua"="3.6"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \
@@ -10,7 +10,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.12.0" && \
+RUN NGINX_VERSION="1.13.1" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
@@ -76,7 +76,7 @@ RUN NGINX_VERSION="1.12.0" && \
     OPENRESTY_JSON_MODULE_FOLDER="${OPENRESTY_JSON_MODULE}-${OPENRESTY_JSON_MODULE_VERSION}" && \
     OPENRESTY_JSON_MODULE_URL="${OPENRESTY_BASE_URL}/${OPENRESTY_JSON_MODULE}/archive/${OPENRESTY_JSON_MODULE_VERSION}.zip" && \
     LUAJIT_VERSION="2.1" && \
-    LUAJIT_PACKAGE_VERSION="${LUAJIT_VERSION}.0-beta2" && \
+    LUAJIT_PACKAGE_VERSION="${LUAJIT_VERSION}.0-beta3" && \
     LUAJIT_PACKAGE_FILENAME="v${LUAJIT_VERSION}.zip" && \
     LUAJIT_PACKAGE_FOLDER="LuaJIT-${LUAJIT_VERSION}" && \
     LUAJIT_BASE_URL="https://github.com/LuaJIT/LuaJIT" && \

@@ -5,7 +5,8 @@ include $(ENV_FILE)
 endif
 
 NS = elvido
-VERSION ?= 3.5
+VERSION ?= 3.6
+
 TAGS ?= latest
 
 REPO = alpine-orientdb
