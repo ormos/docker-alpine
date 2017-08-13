@@ -2,7 +2,7 @@ FROM multiarch/ubuntu-debootstrap:amd64-slim
 
 MAINTAINER elvido <ralf.hofmann@elvido.net>
 
-ENV GLIBC_VERSION='2.25' \
+ENV GLIBC_VERSION='2.26' \
     GLIBC_ARCH='x86_64'\
     GLIBC_PREFIX='/usr/glibc-compat' \
     DATA_FOLDER='/mnt/data'

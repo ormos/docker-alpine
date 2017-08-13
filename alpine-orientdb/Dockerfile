@@ -8,7 +8,7 @@ ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/local/orientdb" \
     ORIENTDB_PID="/var/run/orientdb.pid"
 
-RUN ORIENTDB_VERSION="2.2.22" && \
+RUN ORIENTDB_VERSION="2.2.25" && \
     ORIENTDB_PACKAGE_VERSION="${ORIENTDB_VERSION}" && \
     ORIENTDB_PACKAGE_FILENAME="orientdb-community-${ORIENTDB_VERSION}.tar.gz" && \
     ORIENTDB_PACKAGE_FOLDER="orientdb" && \

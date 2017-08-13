@@ -8,9 +8,9 @@ LABEL "net.elvido.alpine-java-oracle"="3.6"
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=8 && \
-    JAVA_VERSION_MINOR=131 && \
-    JAVA_VERSION_BUILD=11 && \
-    JAVA_PACKAGE_FOLDER=d54c1d3a095b4ff2b6607d096fa80163 && \
+    JAVA_VERSION_MINOR=144 && \
+    JAVA_VERSION_BUILD=01 && \
+    JAVA_PACKAGE_FOLDER=090f390dda5b47b9b721c7dfaa008135 && \
     JAVA_PACKAGE=jdk && \
     JAVA_JCE=unlimited && \
     \

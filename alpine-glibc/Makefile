@@ -12,7 +12,7 @@ REPO = alpine-glibc
 NAME = alpine-glibc
 INSTANCE = default
 
-GLIBC_VERSION ?= 2.25
+GLIBC_VERSION ?= 2.26
 GLIBC_PREFIX  ?= /usr/glibc-compat
 GLIBC_ARCH	  ?= x86_64
 GLIBC_RELEASE ?= glibc-releases/alpine-glibc-$(GLIBC_VERSION)-$(GLIBC_ARCH).tgz
