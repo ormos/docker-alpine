@@ -12,7 +12,7 @@ REPO = alpine-minio
 NAME = alpine-minio
 INSTANCE = default
 
-.PHONY: build push shell run start stop rm release tag $(TAGS)
+.PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
 
 default: build
 
@@ -22,14 +22,14 @@ build:
 push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
-shell:
-	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/sh
+shell: data-folder
+	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) --entrypoint=$(SHELL) $(NS)/$(REPO):$(VERSION)
 
-run:
-	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+run: data-folder
+	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) server $(S3_STORAGE)
 
-start:
-	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+start: data-folder
+	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) server $(S3_STORAGE)
 
 stop:
 	docker stop $(NAME)-$(INSTANCE)
@@ -45,3 +45,8 @@ tag: $(TAGS)
 
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
+
+data-folder: $(DATA_FOLDER)
+
+$(DATA_FOLDER):
+	mkdir -p $(DATA_FOLDER)

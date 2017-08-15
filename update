@@ -10,3 +10,4 @@
 (cd alpine-node ; make release)
 (cd alpine-node-openui5 ; make release)
 (cd alpine-node-s3 ; make release)
+(cd alpine-minio ; make release)
