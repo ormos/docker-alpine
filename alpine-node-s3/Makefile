@@ -12,7 +12,7 @@ REPO = alpine-node-s3
 NAME = alpine-node-s3
 INSTANCE = default
 
-.PHONY: build push shell run start stop rm release tag $(TAGS)
+.PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
 
 default: build
 
@@ -22,13 +22,13 @@ build:
 push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
-shell:
+shell: data-folder
 	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/sh
 
-run:
+run: data-folder
 	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
-start:
+start: data-folder
 	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 stop:
@@ -45,3 +45,9 @@ tag: $(TAGS)
 
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
+
+data-folder: $(DATA_FOLDER)
+
+$(DATA_FOLDER):
+	mkdir -p $(DATA_FOLDER)/buckets
+	mkdir -p $(DATA_FOLDER)/meta

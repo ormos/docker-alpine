@@ -1,5 +1,3 @@
-git clone https://github.com/scality/S3 S3
-
 ## Alpine microcontainer with Java
 
 This is a micro docker container based on Alpine 3.4 with different node.js

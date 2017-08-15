@@ -20,3 +20,5 @@ ENV = \
   -e HOST_NAME="$(HOST_NAME)" \
   -e ACCESS_KEY="$(S3_ACCESS_KEY)" \
   -e SECRET_KEY="$(S3_SECRET_KEY)"
+
+DATA_FOLDER = $(ROOT_DIR)/data
