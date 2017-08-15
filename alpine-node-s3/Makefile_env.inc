@@ -11,6 +11,8 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 DATA_FOLDER:=$(ROOT_DIR)/data
 
+SHELL:=/bin/sh
+
 # docker options
 PORTS = -p $(HOST_PORT):8000
 

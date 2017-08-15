@@ -23,7 +23,7 @@ push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
 shell: data-folder
-	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) /bin/sh
+	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) --entrypoint=$(SHELL) $(NS)/$(REPO):$(VERSION)
 
 run: data-folder
 	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
