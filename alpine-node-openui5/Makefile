@@ -12,7 +12,7 @@ REPO = alpine-node-openui5
 NAME = alpine-node-openui5
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release tag $(TAGS)
 

@@ -12,7 +12,7 @@ REPO = alpine-nginx-example
 NAME = alpine-nginx-example
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release tag $(TAGS)
 

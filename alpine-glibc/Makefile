@@ -12,7 +12,7 @@ REPO = alpine-glibc
 NAME = alpine-glibc
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 GLIBC_VERSION ?= 2.26
 GLIBC_PREFIX  ?= /usr/glibc-compat

@@ -12,7 +12,7 @@ REPO = alpine-java
 NAME = alpine-java
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release
 

@@ -12,7 +12,7 @@ REPO = alpine-node
 NAME = alpine-node
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release tag $(TAGS)
 

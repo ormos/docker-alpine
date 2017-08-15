@@ -12,7 +12,7 @@ REPO = alpine-node-s3
 NAME = alpine-node-s3
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
 

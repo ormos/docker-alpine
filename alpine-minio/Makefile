@@ -12,7 +12,7 @@ REPO = alpine-minio
 NAME = alpine-minio
 INSTANCE = default
 
-XSHELL ?= /bin/shell
+XSHELL ?= /bin/sh
 
 .PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
 
