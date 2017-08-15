@@ -11,8 +11,6 @@ ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 DATA_FOLDER:=$(ROOT_DIR)/data
 
-SHELL:=/bin/sh
-
 # docker options
 PORTS = -p $(HOST_PORT):8000
 
@@ -25,3 +23,10 @@ ENV = \
   -e ACCESS_KEY="$(S3_ACCESS_KEY)" \
   -e SECRET_KEY="$(S3_SECRET_KEY)"
 
+ifneq (,$(filter run start,$(firstword $(MAKECMDGOALS))))
+  RUN_ARGS:=$(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+  $(eval $(RUN_ARGS):;@true)
+endif
+ifeq (,$(RUN_ARGS))
+  RUN_ARGS:=$(DEF_ARGS)
+endif

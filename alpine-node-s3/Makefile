@@ -12,6 +12,8 @@ REPO = alpine-node-s3
 NAME = alpine-node-s3
 INSTANCE = default
 
+XSHELL ?= /bin/shell
+
 .PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
 
 default: build
@@ -23,13 +25,13 @@ push:
 	docker push $(NS)/$(REPO):$(VERSION)
 
 shell: data-folder
-	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) --entrypoint=$(SHELL) $(NS)/$(REPO):$(VERSION)
+	docker run --rm --name $(NAME)-$(INSTANCE) -i -t $(PORTS) $(VOLUMES) $(ENV) --entrypoint=$(XSHELL) $(NS)/$(REPO):$(VERSION)
 
 run: data-folder
-	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) $(RUN_ARGS)
 
 start: data-folder
-	docker run -d --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run -d --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
 
 stop:
 	docker stop $(NAME)-$(INSTANCE)

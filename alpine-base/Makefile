@@ -4,7 +4,6 @@ ifneq ("$(wildcard $(ENV_FILE))","")
 include $(ENV_FILE)
 endif
 
-
 .PHONY: build push commit clean
 
 default: build

@@ -12,6 +12,7 @@ REPO = alpine-abuild
 NAME = alpine-abuild
 INSTANCE = default
 
+XSHELL ?= /bin/shell
 
 .PHONY: secret-save secret-remove build push shell run start stop clean release tag $(TAGS) 
 
