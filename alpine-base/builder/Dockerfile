@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 
 ENV DATA_FOLDER="/mnt/data"
 

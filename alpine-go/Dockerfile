@@ -1,7 +1,6 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-go"="3.6"
 
 RUN apk --no-cache upgrade --update && \

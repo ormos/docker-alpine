@@ -1,11 +1,10 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-node"="3.6"
 
 # Node Version
-ENV  NODE_VERSION="8.3.0" \
+ENV  NODE_VERSION="8.5.0" \
      NPM_VERSION="5" \
      NPM_CONFIG_LOGLEVEL="info"
 

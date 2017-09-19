@@ -1,6 +1,6 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \

@@ -1,7 +1,6 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-glibc"="3.6"
 
 # Install GNU libc (aka glibc) and set C.UTF-8 locale as default.

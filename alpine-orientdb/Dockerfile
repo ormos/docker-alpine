@@ -1,7 +1,6 @@
 FROM elvido/alpine-java
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-orientdb"="3.6"
 
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \

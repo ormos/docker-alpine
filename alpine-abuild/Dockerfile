@@ -1,7 +1,6 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-abuild"="3.6"
 
 ENV BUILDER_HOME=/home/builder

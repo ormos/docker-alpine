@@ -1,6 +1,6 @@
 FROM elvido/alpine-glibc
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 
 LABEL "net.elvido.alpine-java-oracle"="3.6"
 

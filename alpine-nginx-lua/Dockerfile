@@ -1,7 +1,6 @@
 FROM elvido/alpine
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-nginx-lua"="3.6"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
@@ -10,7 +9,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.13.4" && \
+RUN NGINX_VERSION="1.13.5" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \

@@ -1,7 +1,6 @@
 FROM elvido/alpine-node
 
-MAINTAINER elvido <ralf.hofmann@elvido.net>
-
+LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-node-openui5"="3.6"
 
 ENV  DEPLOYMENT_FOLDER="/var/webapp" \
