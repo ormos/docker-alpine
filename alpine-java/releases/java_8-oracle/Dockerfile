@@ -1,8 +1,8 @@
 FROM elvido/alpine-glibc
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-
 LABEL "net.elvido.alpine-java-oracle"="3.6"
+LABEL "net.elvido.alpine-java-8-oracle"="3.6"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm

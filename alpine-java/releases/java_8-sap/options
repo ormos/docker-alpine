@@ -1,2 +1,2 @@
-TAGS='elvido/alpine-java-sap:3.6 elvido/alpine-java-sap:latest'
+TAGS='elvido/alpine-java-8-sap:3.6 elvido/alpine-java-8-sap:latest elvido/alpine-java-sap:3.6 elvido/alpine-java-sap:latest'
 PUSH_IMAGE='true'
