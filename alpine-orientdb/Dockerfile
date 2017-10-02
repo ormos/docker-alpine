@@ -37,7 +37,7 @@ RUN ORIENTDB_VERSION="2.2.28" && \
     \
     rm -rf "${DEPLOYMENT_FOLDER}"/databases/*
 
-ENV PATH "${ORIENTDB_HOME}"/bin:$PATH
+ENV PATH "${ORIENTDB_HOME}/bin:$PATH"
 
 VOLUME ["${DEPLOYMENT_FOLDER}"]
 
