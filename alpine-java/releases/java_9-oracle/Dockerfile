@@ -1,4 +1,4 @@
-FROM elvido/alpine-glibc
+FROM elvido/alpine
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-java-oracle"="3.6"
@@ -8,7 +8,7 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=9 && \
     JAVA_VERSION_MINOR=181 && \
-    JAVA_VERSION_BUILD=01 && \
+    JAVA_VERSION_BUILD=ea && \
     JAVA_PACKAGE_FOLDER=090f390dda5b47b9b721c7dfaa008135 && \
     JAVA_PACKAGE=jdk && \
     \
@@ -18,10 +18,11 @@ RUN JAVA_VERSION_MAJOR=9 && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
-    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}_linux-x64_bin.tar.gz" && \
+    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}-${JAVA_VERSION_BUILD}+${JAVA_VERSION_MINOR}_linux-x64-musl_bin.tar.gz" && \
     echo "Downloading Java package archive: $JAVA_PACKAGE_FILENAME" >&2 && \
+    echo "Downloading: http://download.java.net/java/jdk${JAVA_VERSION_MAJOR}-alpine/archive/${JAVA_VERSION_MINOR}/binaries/${JAVA_PACKAGE_FILENAME}" >&2 && \
     curl -jkSL -# -H "Cookie: oraclelicense=a" \
-      http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}+${JAVA_VERSION_MINOR}/${JAVA_PACKAGE_FILENAME} | \
+      http://download.java.net/java/jdk${JAVA_VERSION_MAJOR}-alpine/archive/${JAVA_VERSION_MINOR}/binaries/${JAVA_PACKAGE_FILENAME} | \
       bsdtar -xf- -C "${JAVA_DIR}"  && \
     ln -s "${JAVA_DIR}/jdk-${JAVA_VERSION_MAJOR}" "${JAVA_HOME}" && \
     \
