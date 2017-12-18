@@ -1,6 +1,6 @@
 ## Alpine microcontainer with Java
 
-This is a micro docker container based on Alpine 3.6 with go language support
+This is a micro docker container based on Alpine 3.7 with go language support
 
 ### Examples
 

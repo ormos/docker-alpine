@@ -1,7 +1,7 @@
 FROM elvido/alpine
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-dops"="3.6"
+LABEL "net.elvido.alpine-dops"="3.7"
 
 ENV WORK_FOLDER="/dops"
 

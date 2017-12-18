@@ -5,7 +5,7 @@ include $(ENV_FILE)
 endif
 
 NS = elvido
-VERSION ?= 3.6
+VERSION ?= 3.7
 TAGS ?= latest
 
 REPO = alpine-nginx-example

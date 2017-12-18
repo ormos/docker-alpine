@@ -1,7 +1,7 @@
 FROM elvido/alpine-node
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-node-s3"="3.6"
+LABEL "net.elvido.alpine-node-s3"="3.7"
 
 # installation folder
 ENV  NODE_S3_FOLDER=/usr/src/app

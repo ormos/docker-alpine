@@ -1,16 +1,16 @@
 FROM elvido/alpine-glibc
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-java-oracle"="3.6"
-LABEL "net.elvido.alpine-java-8-oracle"="3.6"
+LABEL "net.elvido.alpine-java-oracle"="3.7"
+LABEL "net.elvido.alpine-java-8-oracle"="3.7"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=8 && \
-    JAVA_VERSION_MINOR=144 && \
-    JAVA_VERSION_BUILD=01 && \
-    JAVA_PACKAGE_FOLDER=090f390dda5b47b9b721c7dfaa008135 && \
+    JAVA_VERSION_MINOR=152 && \
+    JAVA_VERSION_BUILD=16 && \
+    JAVA_PACKAGE_FOLDER=aa0333dd3019491ca4f6ddbe78cdb6d0 && \
     JAVA_PACKAGE=jdk && \
     JAVA_JCE=unlimited && \
     \

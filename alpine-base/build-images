@@ -4,7 +4,7 @@ readonly VERSION='1.0.1'
 readonly AUTHOR='Ralf Hofmann'
 readonly CONTACT='<r.hofmann@sap.com>'
 
-readonly ALPINE_BASE_IMAGE='alpine:3.6'
+readonly ALPINE_BASE_IMAGE='alpine:3.7'
 
 readonly DEFAULT_BUILDER_IMAGE='elvido/alpine-builder'
 readonly DEFAULT_RELEASES_FOLDER='./releases'

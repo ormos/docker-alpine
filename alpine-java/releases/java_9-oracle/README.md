@@ -24,4 +24,4 @@ elvido/alpine-java:<tag> where tag is
 | Tag    | OpenJDK version             | Alpine Version |
 | ------ | ----------------------------| ---------------|
 | latest |  Oracle Java version 9 JDK  | latest         |
-| 3.6    |  Oracle Java version 9 JDK  | 3.6            |
+| 3.7    |  Oracle Java version 9 JDK  | 3.7            |

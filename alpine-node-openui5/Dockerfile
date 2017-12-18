@@ -1,7 +1,7 @@
 FROM elvido/alpine-node
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-node-openui5"="3.6"
+LABEL "net.elvido.alpine-node-openui5"="3.7"
 
 ENV  DEPLOYMENT_FOLDER="/var/webapp" \
      NODE_ENV="production"

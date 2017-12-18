@@ -2,5 +2,5 @@ RELEASE='v3.6'
 MIRROR='http://dl-cdn.alpinelinux.org/alpine'
 PACKAGES='alpine-baselayout,alpine-keys,apk-tools,libc-utils'
 BUILD_OPTIONS="-b -u -c -t UTC -r ${RELEASE} -m ${MIRROR} -p ${PACKAGES}"
-TAGS='elvido/alpine:3.6 elvido/alpine:latest'
+TAGS='elvido/alpine:3.6'
 PUSH_IMAGE='true'

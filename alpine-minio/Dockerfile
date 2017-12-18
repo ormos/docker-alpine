@@ -1,7 +1,7 @@
 FROM elvido/alpine:edge
 
 LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-minio"="3.6"
+LABEL "net.elvido.alpine-minio"="3.7"
 
 ENV GOPATH /go
 ENV PATH $PATH:$GOPATH/bin

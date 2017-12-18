@@ -1,6 +1,6 @@
-RELEASE='edge'
+RELEASE='v3.7'
 MIRROR='http://dl-cdn.alpinelinux.org/alpine'
-PACKAGES='alpine-baselayout,apk-tools,alpine-keys,libc-utils,busybox'
+PACKAGES='alpine-baselayout,alpine-keys,apk-tools,libc-utils,busybox'
 BUILD_OPTIONS="-b -u -c -t UTC -r ${RELEASE} -m ${MIRROR} -p ${PACKAGES}"
-TAGS='elvido/alpine:edge'
+TAGS='elvido/alpine:3.7 elvido/alpine:latest'
 PUSH_IMAGE='true'
