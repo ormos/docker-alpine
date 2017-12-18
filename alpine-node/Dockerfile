@@ -4,13 +4,13 @@ LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
 LABEL "net.elvido.alpine-node"="3.7"
 
 # Node Version
-ENV  NODE_VERSION="8.9.1" \
+ENV  NODE_VERSION="8.9.3" \
      NPM_VERSION="5" \
      NPM_CONFIG_LOGLEVEL="info"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++ && \
-    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python paxctl libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python paxctl libarchive-tools git openssh && \
     \
     adduser -D -u 1000 node && \
     \

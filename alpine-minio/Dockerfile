@@ -18,7 +18,7 @@ RUN MINIO_PKG="github.com/minio/minio" && \
     go get -v -d "${MINIO_PKG}" && \
     cd "${GOPATH}/src/${MINIO_PKG}" && \
     go install -v -ldflags "$(go run buildscripts/gen-ldflags.go)" && \
-    cp buildscripts/docker-entrypoint.sh /usr/bin/ && \
+    cp dockerscripts/docker-entrypoint.sh /usr/bin/ && \
     chmod +x /usr/bin/docker-entrypoint.sh && \
     \
     echo "Cleaning up..." >&2 && \
