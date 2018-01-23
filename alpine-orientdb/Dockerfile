@@ -7,7 +7,7 @@ ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/local/orientdb" \
     ORIENTDB_PID="/var/run/orientdb.pid"
 
-RUN ORIENTDB_VERSION="2.2.30" && \
+RUN ORIENTDB_VERSION="2.2.31" && \
     ORIENTDB_PACKAGE_VERSION="${ORIENTDB_VERSION}" && \
     ORIENTDB_PACKAGE_FILENAME="orientdb-community-${ORIENTDB_VERSION}.tar.gz" && \
     ORIENTDB_PACKAGE_FOLDER="orientdb" && \
@@ -25,9 +25,11 @@ RUN ORIENTDB_VERSION="2.2.30" && \
     mkdir -p "${DEPLOYMENT_FOLDER}" && \
     mv "${ORIENTDB_HOME}/config" "${DEPLOYMENT_FOLDER}" && \
     ln -s "${DEPLOYMENT_FOLDER}/config" "${ORIENTDB_HOME}" && \
-    mv "${ORIENTDB_HOME}/databases" "${DEPLOYMENT_FOLDER}" && \
+    ( [ -d "${ORIENTDB_HOME}/databases" ] && mv "${ORIENTDB_HOME}/databases" "${DEPLOYMENT_FOLDER}" ) && \
+    ( [ -d "${DEPLOYMENT_FOLDER}/databases" ] || mkdir -p "${DEPLOYMENT_FOLDER}/databases" ) && \
     ln -s "${DEPLOYMENT_FOLDER}/databases" "${ORIENTDB_HOME}" && \
-    mv "${ORIENTDB_HOME}/log" "${DEPLOYMENT_FOLDER}" && \
+    ( [ -d "${ORIENTDB_HOME}/log" ] && mv "${ORIENTDB_HOME}/log" "${DEPLOYMENT_FOLDER}" ) && \
+    ( [ -d "${DEPLOYMENT_FOLDER}/log" ] || mkdir -p "${DEPLOYMENT_FOLDER}/log" ) && \
     ln -s "${DEPLOYMENT_FOLDER}"/log "${ORIENTDB_HOME}" && \
     rm -rf "${ORIENTDB_HOME}/benchmarks" && \
     \

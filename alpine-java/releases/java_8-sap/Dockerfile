@@ -8,7 +8,7 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=8 && \
     JAVA_VERSION_MINOR=1 && \
-    JAVA_VERSION_BUILD=033 && \
+    JAVA_VERSION_BUILD=035 && \
     JAVA_PACKAGE=sapjvm && \
     \
     apk --no-cache upgrade --update && \

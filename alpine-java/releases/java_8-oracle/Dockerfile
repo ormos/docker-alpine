@@ -6,11 +6,10 @@ LABEL "net.elvido.alpine-java-8-oracle"="3.7"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
-
 RUN JAVA_VERSION_MAJOR=8 && \
-    JAVA_VERSION_MINOR=152 && \
-    JAVA_VERSION_BUILD=16 && \
-    JAVA_PACKAGE_FOLDER=aa0333dd3019491ca4f6ddbe78cdb6d0 && \
+    JAVA_VERSION_MINOR=162 && \
+    JAVA_VERSION_BUILD=12 && \
+    JAVA_PACKAGE_FOLDER=0da788060d494f5095bf8624735fa2f1 && \
     JAVA_PACKAGE=jdk && \
     JAVA_JCE=unlimited && \
     \
