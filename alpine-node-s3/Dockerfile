@@ -10,7 +10,7 @@ RUN NODE_S3_REPO="https://github.com/scality/S3.git" && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
-    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python git libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python git libarchive-tools git openssh && \
     \
     echo "Cloning S3 app repo" >&2 && \
     git clone "${NODE_S3_REPO}" "${NODE_S3_FOLDER}" && \

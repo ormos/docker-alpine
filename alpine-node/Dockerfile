@@ -10,7 +10,7 @@ ENV  NODE_VERSION="8.9.4" \
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++ && \
-    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python paxctl libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make python paxctl libarchive-tools git openssh && \
     \
     adduser -D -u 1000 node && \
     \
