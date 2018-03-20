@@ -9,7 +9,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_INC="/usr/include/luajit-2.1" \
     LUA_LIB="/usr/lib/lua"
 
-RUN NGINX_VERSION="1.13.8" && \
+RUN NGINX_VERSION="1.13.10" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
@@ -174,6 +174,7 @@ RUN NGINX_VERSION="1.13.8" && \
   	    --with-pcre-jit \
         --with-mail=dynamic \
         --with-mail_ssl_module \
+        --with-http_grpc_module \
         --add-dynamic-module="../${NGINX_DEVKIT_MODULE_FOLDER}" \
         --add-dynamic-module="../${NGINX_GEOIP_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \

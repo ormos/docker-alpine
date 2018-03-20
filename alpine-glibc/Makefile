@@ -14,7 +14,7 @@ INSTANCE = default
 
 XSHELL ?= /bin/sh
 
-GLIBC_VERSION ?= 2.26
+GLIBC_VERSION ?= 2.27
 GLIBC_PREFIX  ?= /usr/glibc-compat
 GLIBC_ARCH	  ?= x86_64
 GLIBC_RELEASE ?= glibc-releases/alpine-glibc-$(GLIBC_VERSION)-$(GLIBC_ARCH).tgz

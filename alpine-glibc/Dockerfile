@@ -11,7 +11,7 @@ RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
     rm -rf /tmp/* /var/cache/apk/*
 
-ADD glibc-releases/alpine-glibc-2.26-x86_64.tgz /
+ADD glibc-releases/alpine-glibc-2.27-x86_64.tgz /
     
 RUN /usr/glibc-compat/sbin/ldconfig && \
     echo "export LANG=$LANG" > /etc/profile.d/locale.sh
