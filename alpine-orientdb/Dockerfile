@@ -1,7 +1,7 @@
 FROM ormos/alpine-java-11
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-orientdb"="3.8"
+LABEL "ormos.alpine-orientdb"="3.8"
 
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/local/orientdb" \

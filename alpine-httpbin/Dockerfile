@@ -5,10 +5,14 @@ RUN HTTPBIN_PKG="github.com/mccutchen/go-httpbin" && \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet --virtual=.build-dependencies && \
     \
+    echo "Downloading and installing go-bindata package" >&2 && \
+    go get -v github.com/kevinburke/go-bindata/... && \
+    \
     echo "Downloading and installing httpbin package" >&2 && \
-    go get -v -d "${HTTPBIN_PKG}" && \
+    git clone "https://${HTTPBIN_PKG}" "${GOPATH}/src/${HTTPBIN_PKG}" && \
     cd "${GOPATH}/src/${HTTPBIN_PKG}" && \
-    go install -v -ldflags "$(go run buildscripts/gen-ldflags.go)" && \
+    go-bindata -o httpbin/assets/assets.go -pkg=assets -prefix=static static && \
+    go install -v ./cmd/go-httpbin && \
     \
     echo "Cleaning up..." >&2 && \
     rm -rf "${GOPATH}/pkg" "${GOPATH}/src" /usr/local/go && \
@@ -18,14 +22,14 @@ RUN HTTPBIN_PKG="github.com/mccutchen/go-httpbin" && \
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-httpbin"="3.8"
+LABEL "ormos.alpine-httpbin"="3.8"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates openssl
 
-COPY --from=builder /go/bin/* /usr/bin/
+COPY --from=builder /go/bin/go-httpbin /usr/bin/
 
 EXPOSE 8080
 
 ENTRYPOINT ["go-httpbin"]
-CMD ["-h"]
+CMD ["-port 8080"]

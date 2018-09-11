@@ -1,8 +1,8 @@
 FROM ormos/alpine-glibc
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-java-sap"="3.8"
-LABEL "net.ormos.alpine-java-8-sap"="3.8"
+LABEL "ormos.alpine-java-sap"="3.8"
+LABEL "ormos.alpine-java-8-sap"="3.8"
 
 # Java home
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm

@@ -1,8 +1,8 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-java-openjdk"="3.8"
-LABEL "net.ormos.alpine-java-8-openjdk"="3.8"
+LABEL "ormos.alpine-java-openjdk"="3.8"
+LABEL "ormos.alpine-java-8-openjdk"="3.8"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm

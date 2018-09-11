@@ -40,7 +40,7 @@ RUN apk --no-cache upgrade --update && \
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-node"="3.8"
+LABEL "ormos.alpine-node"="3.8"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++

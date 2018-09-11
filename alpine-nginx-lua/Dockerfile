@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-nginx-lua"="3.8"
+LABEL "ormos.alpine-nginx-lua"="3.8"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \

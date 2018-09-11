@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-glibc"="3.8"
+LABEL "ormos.alpine-glibc"="3.8"
 
 # Install GNU libc (aka glibc) and set C.UTF-8 locale as default.
 

@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-abuild"="3.8"
+LABEL "ormos.alpine-abuild"="3.8"
 
 ENV BUILDER_HOME=/home/builder
 ENV PACKAGER_PRIVATE_KEY_NAME=packager.key

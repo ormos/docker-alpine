@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "net.ormos.alpine-dops"="3.8"
+LABEL "ormos.alpine-dops"="3.8"
 
 ENV WORK_FOLDER="/dops"
 
