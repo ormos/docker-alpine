@@ -1,6 +1,6 @@
 FROM scratch
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-base"="edge"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-base"="edge"
 
 ADD rootfs.tgz /

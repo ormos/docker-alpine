@@ -1,15 +1,15 @@
-FROM elvido/alpine-glibc
+FROM ormos/alpine-glibc
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-java-oracle"="3.7"
-LABEL "net.elvido.alpine-java-8-oracle"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-java-oracle"="3.8"
+LABEL "net.ormos.alpine-java-8-oracle"="3.8"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 RUN JAVA_VERSION_MAJOR=8 && \
-    JAVA_VERSION_MINOR=162 && \
-    JAVA_VERSION_BUILD=12 && \
-    JAVA_PACKAGE_FOLDER=0da788060d494f5095bf8624735fa2f1 && \
+    JAVA_VERSION_MINOR=181 && \
+    JAVA_VERSION_BUILD=13 && \
+    JAVA_PACKAGE_FOLDER=96a7b8442fe848ef90c96a2fad6ed6d1 && \
     JAVA_PACKAGE=jdk && \
     JAVA_JCE=unlimited && \
     \

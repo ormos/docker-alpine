@@ -4,7 +4,7 @@ VERSION='1.0.2'
 AUTHOR='Ralf Hofmann'
 CONTACT='<r.hofmann@sap.com>'
 
-LUAROCKS_VERSION="2.3.0"
+LUAROCKS_VERSION="3.0.2"
 LUAROCKS_BASE_URL="http://luarocks.org/releases"
 LUAROCKS_PACKAGE_FILENAME="luarocks-${LUAROCKS_VERSION}.tar.gz"
 LUAROCKS_PACKAGE_FOLDER="luarocks-${LUAROCKS_VERSION}"
@@ -39,7 +39,7 @@ cat <<- -EOF-
 
     -h, --help                Display this help message and exit.
     -v, --version             Display version and exit.
-    -N, --no-relocate         Suprress relocating the deployed files.
+    -N, --no-relocate         Suppress relocating the deployed files.
     -C, --directory <folder>  Change to directory <folder>
 
 -EOF-
@@ -52,7 +52,7 @@ prepare_luarocks() {
   printf >&2 'Downloading and building LuaRocks package: %s\n' "${LUAROCKS_PACKAGE_FILENAME}"
   curl -kSL -# "${LUAROCKS_PACKAGE_URL}" | bsdtar -xf- -C "${TMP_FOLDER}"
   cd "${TMP_FOLDER}/${LUAROCKS_PACKAGE_FOLDER}"
-  ./configure --prefix="/usr" --sysconfdir="/usr/luarocks" --force-config --lua-suffix=jit --lua-version="${LUA_VERSION}" \
+  ./configure --prefix="/usr" --sysconfdir="/etc/luarocks-deploy" --force-config --lua-version="${LUA_VERSION}" \
               --with-lua-include="${LUA_INC}" --with-lua-lib="${LUA_LIB}"
   make bootstrap
   cd .. && rm -rf "${TMP_FOLDER:?}/${LUAROCKS_PACKAGE_FOLDER}"
@@ -68,14 +68,14 @@ cleanup_luarocks() {
         xargs -0 -n1 -I{} bsdtar -xf {} \
           --exclude 'rock_manifest' --exclude 'doc/*' --exclude 'tests/*' --exclude 'test/*' --exclude 'samples/*' \
           --exclude 'sample/*' --exclude 'bin/*' --exclude '*.rockspec' --exclude 'README' \
-          --strip-components 1 -C "${LUA_LIB}/${LUA_VERSION}"
-      find "${LUA_LIB}/${LUA_VERSION}" -name '*~' -delete
+          --strip-components 1 -C "${LUA_MOD}"
+      find "${LUA_MOD}" -name '*~' -delete
       cd .. ; rm  -rf "${TMP_FOLDER:?}/luarocks-deploy"
     )
   fi
 
 	printf >&2 'Cleanup temporary files and packages...\n'
-	rm -rf "/usr/luarocks" \
+	rm -rf "/etc/luarocks-deploy" \
          "/usr/lib/luarocks" \
          "/usr/bin/luarocks" \
          "/usr/share/lua/${LUA_VERSION}/luarocks" \

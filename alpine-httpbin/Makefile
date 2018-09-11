@@ -4,17 +4,17 @@ ifneq ("$(wildcard $(ENV_FILE))","")
 include $(ENV_FILE)
 endif
 
-NS = elvido
-VERSION ?= 3.7
+NS = ormos
+VERSION ?= 3.8
 TAGS ?= latest
 
-REPO = alpine-node-s3
-NAME = alpine-node-s3
+REPO = alpine-httpbin
+NAME = alpine-httpbin
 INSTANCE = default
 
 XSHELL ?= /bin/sh
 
-.PHONY: build push shell run start stop rm release tag $(TAGS) data-folder
+.PHONY: build push shell run start stop rm release tag $(TAGS)
 
 default: build
 
@@ -31,13 +31,13 @@ run: data-folder
 	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) $(RUN_ARGS)
 
 start: data-folder
-	docker run -d --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+	docker run -d --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) $(RUN_ARGS)
 
 stop:
 	docker stop $(NAME)-$(INSTANCE)
 
 rm:
-	docker rm $(NAME)-$(INSTANCE)
+	docker rm -f $(NAME)-$(INSTANCE)
 
 release: build
 	@make --no-print-directory tag -e VERSION="$(VERSION)" -e TAGS="$(TAGS)"
@@ -47,9 +47,3 @@ tag: $(TAGS)
 
 $(TAGS):
 	docker tag $(NS)/$(REPO):$(VERSION) $(NS)/$(REPO):$@
-
-data-folder: $(DATA_FOLDER)
-
-$(DATA_FOLDER):
-	mkdir -p $(DATA_FOLDER)/buckets
-	mkdir -p $(DATA_FOLDER)/meta

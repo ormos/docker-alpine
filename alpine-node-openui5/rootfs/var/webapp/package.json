@@ -19,22 +19,19 @@
   },
   "scripts": {
     "start": "node index.js",
-    "postinstall": "mkdir OpenUI5 ; curl -jkSL -# https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.52.9.zip | bsdtar -xvf- -C OpenUI5",
+    "postinstall": "mkdir OpenUI5 ; curl -jkSL -# https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.56.7.zip | bsdtar -xvf- -C OpenUI5",
     "preuninstall": "npm run clean",
     "clean": "[ -d node_modules ] && (ls -1 node_modules | xargs npm uninstall) || : ; rm -rf node_modules || : ; rm -rf OpenUI5 || :"
-  },
-  "bugs": {
-    "url": ""
   },
   "engines": { 
     "node": ">= 0.12.0" 
   },
   "main": "index.js",
   "dependencies": {
-	  "compression": "~1.6.2",
-    "express": "~4.14.1",
+	  "compression": "~1.7.3",
+    "express": "~4.16.3",
 	  "open": "~0.0.5",
-	  "serve-index": "~1.8.0"
+	  "serve-index": "~1.9.1"
   },
   "readmeFilename": "README.md",
   "_id": "openui5-nodeserve@1.0.0"

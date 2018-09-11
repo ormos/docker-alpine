@@ -1,12 +1,13 @@
 #!/usr/bin/env sh
+# shellcheck disable=SC2039
 
 readonly VERSION='1.0.1'
 readonly AUTHOR='Ralf Hofmann'
 readonly CONTACT='<r.hofmann@sap.com>'
 
-readonly ALPINE_BASE_IMAGE='alpine:3.7'
+readonly ALPINE_BASE_IMAGE='alpine:3.8'
 
-readonly DEFAULT_BUILDER_IMAGE='elvido/alpine-builder'
+readonly DEFAULT_BUILDER_IMAGE='ormos/alpine-builder'
 readonly DEFAULT_RELEASES_FOLDER='./releases'
 
 readonly BUILDER_FOLDER='builder'
@@ -67,6 +68,7 @@ build()
   do
     (
       # source build options
+      # shellcheck disable=SC1090
       . "${OPTIONS_FILE}"
       # shellcheck disable=SC2155
       local RELEASE_DIR="$(dirname -- "${OPTIONS_FILE}")"
@@ -113,6 +115,7 @@ push()
   do
     (
       # source build options
+      # shellcheck disable=SC1090
       . "${OPTIONS_FILE}"
       for TAG in ${TAGS} 
       do
@@ -171,7 +174,7 @@ cat <<- -EOF-
 -EOF-
 }
 
-### begin -- elvido/utility : 1.1.0 / 27-FEB-2017
+### begin -- ormos/utility : 1.1.0 / 27-FEB-2017
 ###########################################################################
 # utility functions
 ###########################################################################
@@ -181,7 +184,7 @@ cat <<- -EOF-
 #
 # shellcheck disable=SC2120
 _version() {
-  _message -s -f "Version %s by %s %s\n" "${VERSION}" "${AUTHOR}" "${CONTACT}"
+  _message -s -f 'Version %s by %s %s\n' "${VERSION}" "${AUTHOR}" "${CONTACT}"
 }
 
 #
@@ -491,4 +494,4 @@ _real_path()
 ###########################################################################
 main "$@"
 
-### end -- elvido/utility : 1.1.0 / 27-FEB-2017
+### end -- ormos/utility : 1.1.0 / 27-FEB-2017

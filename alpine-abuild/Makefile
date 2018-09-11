@@ -4,8 +4,8 @@ ifneq ("$(wildcard $(ENV_FILE))","")
 include $(ENV_FILE)
 endif
 
-NS = elvido
-VERSION ?= 3.7
+NS = ormos
+VERSION ?= 3.8
 TAGS ?= latest
 
 REPO = alpine-abuild
@@ -29,7 +29,7 @@ shell: $(PACKAGER_KEY) $(PACKAGER_RSA)
 	$(PACKAGER_RSA_RELEASE)
 
 run: $(PACKAGER_KEY) $(PACKAGER_RSA)
-	-docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) build
+	docker run --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION) build
 	$(PACKAGER_RSA_RELEASE)
 
 release: build

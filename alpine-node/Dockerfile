@@ -1,10 +1,7 @@
-FROM elvido/alpine
-
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-node"="3.7"
+FROM ormos/alpine as builder
 
 # Node Version
-ENV  NODE_VERSION="8.10.0" \
+ENV  NODE_VERSION="8.11.4" \
      NPM_VERSION="5" \
      NPM_CONFIG_LOGLEVEL="info"
 
@@ -39,5 +36,21 @@ RUN apk --no-cache upgrade --update && \
     echo "Cleaning up..." >&2 && \
     apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
+
+FROM ormos/alpine
+
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-node"="3.8"
+
+RUN apk --no-cache upgrade --update && \
+    apk --no-cache add --quiet ca-certificates libstdc++
+ 
+COPY --from=builder /usr/bin/node /usr/bin/
+COPY --from=builder /usr/lib/node_modules /usr/lib/node_modules/
+
+RUN ln -s /usr/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm && \
+    ln -s /usr/lib/node_modules/npm/bin/npx-cli.js /usr/bin/npx && \
+    \
+    adduser -D -u 1000 node
 
 CMD [ "node" ]    

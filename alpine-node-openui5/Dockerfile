@@ -1,7 +1,7 @@
-FROM elvido/alpine-node
+FROM ormos/alpine-node
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-node-openui5"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-node-openui5"="3.8"
 
 ENV  DEPLOYMENT_FOLDER="/var/webapp" \
      NODE_ENV="production"
@@ -9,8 +9,7 @@ ENV  DEPLOYMENT_FOLDER="/var/webapp" \
 COPY rootfs /
 
 RUN apk --no-cache upgrade --update && \
-    apk --no-cache add --quiet ca-certificates libstdc++ && \
-    apk --no-cache add --quiet --virtual=.build-dependencies binutils-gold curl g++ gcc libgcc linux-headers make libarchive-tools && \
+    apk --no-cache add --quiet --virtual=.build-dependencies curl libarchive-tools && \
     \
     echo "Deploying web app" >&2 && \
     chown -R node:node "${DEPLOYMENT_FOLDER}" && cd "${DEPLOYMENT_FOLDER}" && su node -c "npm install" && \

@@ -1,6 +1,6 @@
-FROM elvido/alpine
+FROM ormos/alpine
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \

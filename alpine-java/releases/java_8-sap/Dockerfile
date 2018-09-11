@@ -1,14 +1,15 @@
-FROM elvido/alpine-glibc
+FROM ormos/alpine-glibc
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-java-sap"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-java-sap"="3.8"
+LABEL "net.ormos.alpine-java-8-sap"="3.8"
 
 # Java home
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=8 && \
     JAVA_VERSION_MINOR=1 && \
-    JAVA_VERSION_BUILD=035 && \
+    JAVA_VERSION_BUILD=042 && \
     JAVA_PACKAGE=sapjvm && \
     \
     apk --no-cache upgrade --update && \
@@ -65,6 +66,3 @@ RUN JAVA_VERSION_MAJOR=8 && \
     echo "Cleaning up..." >&2 && \
     apk del --quiet --purge .build-dependencies && \
     rm -rf /tmp/* /var/cache/apk/*
-
-    # for now a dirty hack - need fix
-    COPY libstdc++.so.6 libgcc_s.so.1 /usr/glibc-compat/lib/ 

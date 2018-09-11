@@ -1,7 +1,7 @@
-FROM elvido/alpine
+FROM ormos/alpine
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-abuild"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-abuild"="3.8"
 
 ENV BUILDER_HOME=/home/builder
 ENV PACKAGER_PRIVATE_KEY_NAME=packager.key

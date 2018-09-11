@@ -1,13 +1,13 @@
-FROM elvido/alpine-java-8
+FROM ormos/alpine-java-11
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-orientdb"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-orientdb"="3.8"
 
 ENV DEPLOYMENT_FOLDER="/var/orientdb" \
     ORIENTDB_HOME="/usr/local/orientdb" \
     ORIENTDB_PID="/var/run/orientdb.pid"
 
-RUN ORIENTDB_VERSION="2.2.33" && \
+RUN ORIENTDB_VERSION="3.0.7" && \
     ORIENTDB_PACKAGE_VERSION="${ORIENTDB_VERSION}" && \
     ORIENTDB_PACKAGE_FILENAME="orientdb-community-${ORIENTDB_VERSION}.tar.gz" && \
     ORIENTDB_PACKAGE_FOLDER="orientdb" && \

@@ -4,8 +4,8 @@ ifneq ("$(wildcard $(ENV_FILE))","")
 include $(ENV_FILE)
 endif
 
-NS = elvido
-VERSION ?= 3.7
+NS = ormos
+VERSION ?= 3.8
 TAGS ?= latest
 
 REPO = alpine-glibc
@@ -14,7 +14,7 @@ INSTANCE = default
 
 XSHELL ?= /bin/sh
 
-GLIBC_VERSION ?= 2.27
+GLIBC_VERSION ?= 2.28
 GLIBC_PREFIX  ?= /usr/glibc-compat
 GLIBC_ARCH	  ?= x86_64
 GLIBC_RELEASE ?= glibc-releases/alpine-glibc-$(GLIBC_VERSION)-$(GLIBC_ARCH).tgz

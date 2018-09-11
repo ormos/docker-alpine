@@ -4,8 +4,8 @@ ifneq ("$(wildcard $(ENV_FILE))","")
 include $(ENV_FILE)
 endif
 
-NS = elvido
-VERSION ?= 3.7
+NS = ormos
+VERSION ?= 3.8
 TAGS ?= latest
 
 REPO = alpine-node-openui5
@@ -32,6 +32,9 @@ run:
 
 start:
 	docker run -d --rm --name $(NAME)-$(INSTANCE) $(PORTS) $(VOLUMES) $(ENV) $(NS)/$(REPO):$(VERSION)
+ifeq ($(HOST_SYS),Linux)
+	xdg-open "http://localhost:$(HOST_PORT)/OpenUI5"
+endif
 
 stop:
 	docker stop $(NAME)-$(INSTANCE)

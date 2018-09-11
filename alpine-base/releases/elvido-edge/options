@@ -2,5 +2,5 @@ RELEASE='edge'
 MIRROR='http://dl-cdn.alpinelinux.org/alpine'
 PACKAGES='alpine-baselayout,apk-tools,alpine-keys,libc-utils,busybox'
 BUILD_OPTIONS="-b -u -c -t UTC -r ${RELEASE} -m ${MIRROR} -p ${PACKAGES}"
-TAGS='elvido/alpine:edge'
+TAGS='ormos/alpine:edge'
 PUSH_IMAGE='true'

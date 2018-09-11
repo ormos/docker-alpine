@@ -23,7 +23,7 @@ $ ./build-image
 Pass version files to the `build` script to build specific versions:
 
 ```console
-$ ./build-image version/elvido-3.4/options versions/elvido-edge/options
+$ ./build-image version/ormos-3.4/options versions/ormos-edge/options
 ```
 
 With `parallel` available you can speed up building a bit:

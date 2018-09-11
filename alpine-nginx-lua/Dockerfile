@@ -1,15 +1,16 @@
-FROM elvido/alpine
+FROM ormos/alpine
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-nginx-lua"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-nginx-lua"="3.8"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \
     LUA_JIT="2.1" \
     LUA_INC="/usr/include/luajit-2.1" \
-    LUA_LIB="/usr/lib/lua"
+    LUA_LIB="/usr/lib" \
+    LUA_MOD="/usr/lib/lua/5.1"
 
-RUN NGINX_VERSION="1.13.10" && \
+RUN NGINX_VERSION="1.15.3" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \
@@ -100,9 +101,6 @@ RUN NGINX_VERSION="1.13.10" && \
       export LUAJIT_INC="${LUA_INC}" && \
     cd /tmp && rm -rf "/tmp/${LUAJIT_PACKAGE_FOLDER}" && \
     \
-    echo "Apply temporary patch for LuaJIT (${LUAJIT_PACKAGE_VERSION}) upstream" >&2 && \    
-    sed -ie 's/#define LUA_VERSION_NUM	501/#define LUA_VERSION_NUM	502/g' "${LUA_INC}/lua.h" && \
-    \
     echo "Downloading and building libCIDR package: $LIBCIDR_PACKAGE_FILENAME" >&2 && \
     curl -kSL -# "${LIBCIDR_PACKAGE_URL}" | tar -xJf- -C "/tmp" && \
     cd "/tmp/${LIBCIDR_PACKAGE_FOLDER}" && \
@@ -174,7 +172,6 @@ RUN NGINX_VERSION="1.13.10" && \
   	    --with-pcre-jit \
         --with-mail=dynamic \
         --with-mail_ssl_module \
-        --with-http_grpc_module \
         --add-dynamic-module="../${NGINX_DEVKIT_MODULE_FOLDER}" \
         --add-dynamic-module="../${NGINX_GEOIP_MODULE_FOLDER}" \
         --add-dynamic-module="../${OPENRESTY_LUA_MODULE_FOLDER}" \

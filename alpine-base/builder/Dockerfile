@@ -1,6 +1,6 @@
-FROM alpine:3.7
+FROM alpine
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
 
 ENV DATA_FOLDER="/mnt/data"
 

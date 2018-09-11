@@ -1,11 +1,14 @@
-FROM elvido/alpine
+FROM ormos/alpine
 
-LABEL maintainer="elvido <ralf.hofmann@elvido.net>"
-LABEL "net.elvido.alpine-go"="3.7"
+LABEL maintainer="ormos <r.hofmann@sap.com>"
+LABEL "net.ormos.alpine-go"="3.8"
+
+ENV GOPATH /go
+ENV PATH $PATH:$GOPATH/bin
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
-    apk --no-cache add --quiet build-base go git openssl curl && \
+    apk --no-cache add --quiet build-base go git musl-dev openssl curl && \
     \
     echo "Cleaning up..." >&2 && \
     rm -rf /tmp/* /var/cache/apk/*

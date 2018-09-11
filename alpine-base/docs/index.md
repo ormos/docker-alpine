@@ -8,7 +8,7 @@ The heart of this image is [Alpine Linux][alpine]. The image is only 5 MB and ha
 
 ## Official
 
-This image is really similar to the [official Alpine Linux image in the Docker Library][library]. The build process for `elvido/alpine` is based on the official `alpine` image. However, different build options are used. Check out [the build page][build] for more information on differences.
+This image is really similar to the [official Alpine Linux image in the Docker Library][library]. The build process for `ormos/alpine` is based on the official `alpine` image. However, different build options are used. Check out [the build page][build] for more information on differences.
 
 ## Motivations
 
@@ -33,4 +33,4 @@ This image is built and tested in a continuous integration environment using the
 [caveats]: ./caveats
 [alpine]: http://alpinelinux.org/
 [library]: https://github.com/docker-library/official-images/blob/master/library/alpine
-[hub]: https://hub.docker.com/r/elvido/alpine/
+[hub]: https://hub.docker.com/r/ormos/alpine/
