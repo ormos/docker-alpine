@@ -32,4 +32,4 @@ COPY --from=builder /go/bin/go-httpbin /usr/bin/
 EXPOSE 8080
 
 ENTRYPOINT ["go-httpbin"]
-CMD ["-port 8080"]
+CMD ["-port", "8080"]
