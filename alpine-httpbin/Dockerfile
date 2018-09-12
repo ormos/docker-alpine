@@ -12,7 +12,7 @@ RUN HTTPBIN_PKG="github.com/mccutchen/go-httpbin" && \
     git clone "https://${HTTPBIN_PKG}" "${GOPATH}/src/${HTTPBIN_PKG}" && \
     cd "${GOPATH}/src/${HTTPBIN_PKG}" && \
     go-bindata -o httpbin/assets/assets.go -pkg=assets -prefix=static static && \
-    go install -v ./cmd/go-httpbin && \
+    go install -v --ldflags='-s -w -linkmode external -extldflags "-static"' ./cmd/go-httpbin && \
     \
     echo "Cleaning up..." >&2 && \
     rm -rf "${GOPATH}/pkg" "${GOPATH}/src" /usr/local/go && \

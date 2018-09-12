@@ -8,7 +8,7 @@ ENV PATH $PATH:$GOPATH/bin
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
-    apk --no-cache add --quiet build-base go gcc g++ git musl-dev openssl curl && \
+    apk --no-cache add --quiet build-base go gcc g++ git musl-dev libc6-compat openssl curl && \
     \
     echo "Cleaning up..." >&2 && \
     rm -rf /tmp/* /var/cache/apk/*
