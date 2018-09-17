@@ -1,2 +1,2 @@
-TAGS='ormos/alpine-java-12-openjdk:3.8 ormos/alpine-java-12-openjdk:latest ormos/alpine-java-12:3.8 ormos/alpine-java-12:latest ormos/alpine-java:3.8 ormos/alpine-java:latest'
+TAGS='ormos/alpine-java-11-sap:3.8 ormos/alpine-java-11-sap:latest ormos/alpine-java-11:3.8 ormos/alpine-java-11:latest ormos/alpine-java:3.8 ormos/alpine-java:latest'
 PUSH_IMAGE='true'

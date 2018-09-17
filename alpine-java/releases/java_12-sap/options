@@ -1,0 +1,2 @@
+TAGS='ormos/alpine-java-12-sap:3.8 ormos/alpine-java-12-sap:latest ormos/alpine-java-12:3.8 ormos/alpine-java-12:latest'
+PUSH_IMAGE='true'

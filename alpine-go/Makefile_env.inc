@@ -9,7 +9,6 @@ DATA_FOLDER:=$(ROOT_DIR)/data
 #PORTS = -p $(HOST_PORT):8089
 
 #VOLUMES = \
-#  -v $(DATA_FOLDER):$(S3_STORAGE)
 
 #ENV = \
 
