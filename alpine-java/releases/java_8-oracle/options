@@ -1,2 +1,0 @@
-TAGS='ormos/alpine-java-8-oracle:3.8 ormos/alpine-java-8-oracle:latest ormos/alpine-java-8:3.8 ormos/alpine-java-8:latest'
-PUSH_IMAGE='true'

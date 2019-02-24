@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-go"="3.8"
+LABEL "ormos.alpine-go"="3.9"
 
 ENV GOPATH /go
 ENV PATH $PATH:$GOPATH/bin

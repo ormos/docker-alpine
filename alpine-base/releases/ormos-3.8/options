@@ -1,0 +1,6 @@
+RELEASE='v3.8'
+MIRROR='http://dl-cdn.alpinelinux.org/alpine'
+PACKAGES='alpine-baselayout,alpine-keys,apk-tools,libc-utils,busybox'
+BUILD_OPTIONS="-b -u -c -t UTC -r ${RELEASE} -m ${MIRROR} -p ${PACKAGES}"
+TAGS='ormos/alpine:3.8'
+PUSH_IMAGE='true'

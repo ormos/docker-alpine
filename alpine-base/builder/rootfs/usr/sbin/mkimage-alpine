@@ -151,7 +151,7 @@ cat <<- -EOF-
 
     -h, --help                 Display this help message and exit.
     -v, --version              Display version and exit.
-    -r, --release <release>    The alpine release version (e.g. 'v3.8').
+    -r, --release <release>    The alpine release version (e.g. 'v3.9').
     -m, --mirror <mirror>      Alpine mirror to use as url.
     -S, --stream               Stream archive to stdout.
     -E, --exclude              Exclude alpine comunity respository.

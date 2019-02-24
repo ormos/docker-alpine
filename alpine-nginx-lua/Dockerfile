@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-nginx-lua"="3.8"
+LABEL "ormos.alpine-nginx-lua"="3.9"
 
 ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_VERSION="5.1" \
@@ -10,7 +10,7 @@ ENV DEPLOYMENT_FOLDER="/var/nginx" \
     LUA_LIB="/usr/lib" \
     LUA_MOD="/usr/lib/lua/5.1"
 
-RUN NGINX_VERSION="1.15.3" && \
+RUN NGINX_VERSION="1.15.8" && \
     NGINX_PACKAGE_VERSION="${NGINX_VERSION}" && \
     NGINX_PACKAGE_FILENAME="nginx-${NGINX_PACKAGE_VERSION}.tar.gz" && \
     NGINX_PACKAGE_FOLDER="nginx-${NGINX_PACKAGE_VERSION}" && \

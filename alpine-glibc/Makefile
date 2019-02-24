@@ -5,7 +5,7 @@ include $(ENV_FILE)
 endif
 
 NS = ormos
-VERSION ?= 3.8
+VERSION ?= 3.9
 TAGS ?= latest
 
 REPO = alpine-glibc
@@ -14,7 +14,7 @@ INSTANCE = default
 
 XSHELL ?= /bin/sh
 
-GLIBC_VERSION ?= 2.28
+GLIBC_VERSION ?= 2.29
 GLIBC_PREFIX  ?= /usr/glibc-compat
 GLIBC_ARCH	  ?= x86_64
 GLIBC_RELEASE ?= glibc-releases/alpine-glibc-$(GLIBC_VERSION)-$(GLIBC_ARCH).tgz

@@ -23,5 +23,5 @@ ormos/alpine-java:<tag> where tag is
 
 | Tag    | OpenJDK version             | Alpine Version |
 | ------ | ----------------------------| ---------------|
-| latest |  Oracle Java version 8 JDK  | latest         |
-| 3.8    |  Oracle Java version 8 JDK  | 3.8            |
+| latest |  Oracle Java version 9 JDK  | latest         |
+| 3.9    |  Oracle Java version 9 JDK  | 3.9            |

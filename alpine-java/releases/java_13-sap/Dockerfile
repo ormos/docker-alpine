@@ -1,16 +1,17 @@
 FROM ormos/alpine-glibc
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-java-oracle"="3.8"
-LABEL "ormos.alpine-java-10-oracle"="3.8"
+LABEL "ormos.alpine-java-sap"="3.9"
+LABEL "ormos.alpine-java-13-sap"="3.9"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
-RUN JAVA_VERSION_MAJOR=10 && \
-    JAVA_VERSION_MINOR=0.2 && \
-    JAVA_VERSION_BUILD=13 && \
-    JAVA_PACKAGE_FOLDER=19aef61b38124481863b1413dce1855f && \
-    JAVA_PACKAGE=jdk && \
+
+RUN JAVA_VERSION_MAJOR=13 && \
+    JAVA_VERSION_MINOR=6 && \
+    JAVA_VERSION_RELEASE=ea && \
+    JAVA_PACKAGE_FOLDER=sapmachine-${JAVA_VERSION_MAJOR}%2B${JAVA_VERSION_MINOR} && \
+    JAVA_PACKAGE=sapmachine-jdk && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
@@ -18,17 +19,18 @@ RUN JAVA_VERSION_MAJOR=10 && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
-    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}_linux-x64_bin.tar.gz" && \
+    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}-${JAVA_VERSION_RELEASE}.${JAVA_VERSION_MINOR}_linux-x64_bin.tar.gz" && \
     echo "Downloading Java package archive: $JAVA_PACKAGE_FILENAME" >&2 && \
-    curl -jkSL -# -H "Cookie: oraclelicense=accept-securebackup-cookie" \
-      http://download.oracle.com/otn-pub/java/jdk/${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}+${JAVA_VERSION_BUILD}/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME} | \
+    echo "Downloading: https://github.com/SAP/SapMachine/releases/download/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME}" >&2 && \
+    curl -jkSL -# \
+      https://github.com/SAP/SapMachine/releases/download/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME} | \
       bsdtar -xf- -C "${JAVA_DIR}"  && \
-    ln -s "${JAVA_DIR}/jdk-${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}" "${JAVA_HOME}" && \
+    ln -s "${JAVA_DIR}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}" "${JAVA_HOME}" && \
     \
     # remove stuff we do not need
     rm -rf ${JAVA_HOME}/lib/*src.zip \
-          ${JAVA_HOME}/lib/missioncontrol \
-          ${JAVA_HOME}/lib/*javafx* \
+           ${JAVA_HOME}/lib/missioncontrol \
+           ${JAVA_HOME}/lib/*javafx* \
     \
     # adjust some settings
     echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf && \

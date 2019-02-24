@@ -5,7 +5,7 @@ include $(ENV_FILE)
 endif
 
 NS = ormos
-VERSION ?= 3.8
+VERSION ?= 3.9
 TAGS ?= latest
 
 REPO = alpine-nginx-lua

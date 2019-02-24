@@ -20,7 +20,7 @@ RUN MINIO_PKG="github.com/minio/minio" && \
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-minio"="3.8"
+LABEL "ormos.alpine-minio"="3.9"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates openssl

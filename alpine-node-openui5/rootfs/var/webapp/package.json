@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "postinstall": "mkdir OpenUI5 ; curl -jkSL -# https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.56.8.zip | bsdtar -xvf- -C OpenUI5",
+    "postinstall": "mkdir OpenUI5 ; curl -jkSL -# https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.62.1.zip | bsdtar -xvf- -C OpenUI5",
     "preuninstall": "npm run clean",
     "clean": "[ -d node_modules ] && (ls -1 node_modules | xargs npm uninstall) || : ; rm -rf node_modules || : ; rm -rf OpenUI5 || :"
   },

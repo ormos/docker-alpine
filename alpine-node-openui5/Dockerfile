@@ -1,7 +1,7 @@
 FROM ormos/alpine-node
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-node-openui5"="3.8"
+LABEL "ormos.alpine-node-openui5"="3.9"
 
 ENV  DEPLOYMENT_FOLDER="/var/webapp" \
      NODE_ENV="production"

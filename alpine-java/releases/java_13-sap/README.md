@@ -1,6 +1,6 @@
 ## Alpine microcontainer with Java
 
-This is a micro docker container based on Alpine 3.4 with different version 1.10 of Oracle java
+This is a micro docker container based on Alpine 3.4 with different version 1.8 of Oracle java
 
 ### Examples
 
@@ -21,7 +21,7 @@ The different version is determined with the TAG
 This image contains the following versions of java, the container names are
 ormos/alpine-java:<tag> where tag is
 
-| Tag    | OpenJDK version              | Alpine Version |
-| ------ | -----------------------------| ---------------|
-| latest |  Oracle Java version 10 JDK  | latest         |
-| 3.8    |  Oracle Java version 10 JDK  | 3.8            |
+| Tag    | OpenJDK version             | Alpine Version |
+| ------ | ----------------------------| ---------------|
+| latest |  Oracle Java version 9 JDK  | latest         |
+| 3.9    |  Oracle Java version 9 JDK  | 3.9            |

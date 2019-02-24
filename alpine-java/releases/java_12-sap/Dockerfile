@@ -1,14 +1,14 @@
 FROM ormos/alpine-glibc
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-java-sap"="3.8"
-LABEL "ormos.alpine-java-12-sap"="3.8"
+LABEL "ormos.alpine-java-sap"="3.9"
+LABEL "ormos.alpine-java-12-sap"="3.9"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
 RUN JAVA_VERSION_MAJOR=12 && \
-    JAVA_VERSION_MINOR=10 && \
+    JAVA_VERSION_MINOR=28 && \
     JAVA_VERSION_RELEASE=ea && \
     JAVA_PACKAGE_FOLDER=sapmachine-${JAVA_VERSION_MAJOR}%2B${JAVA_VERSION_MINOR}-0 && \
     JAVA_PACKAGE=sapmachine-jdk && \

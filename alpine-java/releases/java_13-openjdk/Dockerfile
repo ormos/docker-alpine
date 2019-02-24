@@ -1,17 +1,17 @@
-FROM ormos/alpine-glibc
+FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-java-sap"="3.8"
-LABEL "ormos.alpine-java-10-sap"="3.8"
+LABEL "ormos.alpine-java-openjdk"="3.9"
+LABEL "ormos.alpine-java-13-openjdk"="3.9"
 
 # java home home environment
 ENV JAVA_HOME=/usr/lib/jvm/default-jvm
 
-RUN JAVA_VERSION_MAJOR=10 && \
-    JAVA_VERSION_MINOR=0.2 && \
-    JAVA_VERSION_RELEASE=13 && \
-    JAVA_PACKAGE_FOLDER=sapmachine-${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}%2B${JAVA_VERSION_RELEASE}-1 && \
-    JAVA_PACKAGE=sapmachine-jdk && \
+RUN JAVA_VERSION_MAJOR=13 && \
+    JAVA_VERSION_MINOR=7 && \
+    JAVA_VERSION_BUILD=ea && \
+    JAVA_PACKAGE_FOLDER=${JAVA_VERSION_MINOR}/binaries && \
+    JAVA_PACKAGE=openjdk && \
     \
     apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
@@ -19,13 +19,13 @@ RUN JAVA_VERSION_MAJOR=10 && \
     \
     JAVA_DIR=$(dirname "${JAVA_HOME}") && \
     mkdir -p "${JAVA_DIR}" && \
-    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}.${JAVA_VERSION_RELEASE}_linux-x64_bin.tar.gz" && \
+    JAVA_PACKAGE_FILENAME="${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}-${JAVA_VERSION_BUILD}+${JAVA_VERSION_MINOR}_linux-x64-musl_bin.tar.gz" && \
     echo "Downloading Java package archive: $JAVA_PACKAGE_FILENAME" >&2 && \
-    echo "Downloading: https://github.com/SAP/SapMachine/releases/download/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME}" >&2 && \
-    curl -jkSL -# \
-      https://github.com/SAP/SapMachine/releases/download/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME} | \
+    echo "Downloading: http://download.java.net/java/early_access/alpine/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME}" >&2 && \
+    curl -jkSL -# -H "Cookie: oraclelicense=a" \
+      http://download.java.net/java/early_access/alpine/${JAVA_PACKAGE_FOLDER}/${JAVA_PACKAGE_FILENAME} | \
       bsdtar -xf- -C "${JAVA_DIR}"  && \
-    ln -s "${JAVA_DIR}/${JAVA_PACKAGE}-${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}" "${JAVA_HOME}" && \
+    ln -s "${JAVA_DIR}/jdk-${JAVA_VERSION_MAJOR}" "${JAVA_HOME}" && \
     \
     # remove stuff we do not need
     rm -rf ${JAVA_HOME}/lib/*src.zip \

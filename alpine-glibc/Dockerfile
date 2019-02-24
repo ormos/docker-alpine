@@ -1,7 +1,7 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-glibc"="3.8"
+LABEL "ormos.alpine-glibc"="3.9"
 
 # Install GNU libc (aka glibc) and set C.UTF-8 locale as default.
 
@@ -11,7 +11,7 @@ RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates && \
     apk --no-cache add --quiet --virtual=.build-dependencies curl libarchive-tools binutils
     
-ADD glibc-releases/alpine-glibc-2.28-x86_64.tgz /
+ADD glibc-releases/alpine-glibc-2.29-x86_64.tgz /
 
 RUN echo "Installing addtional runtime libs..." >&2 && \
     curl -jkSL -# \

@@ -1,8 +1,8 @@
 FROM ormos/alpine as builder
 
 # Node Version
-ENV  NODE_VERSION="8.11.4" \
-     NPM_VERSION="5" \
+ENV  NODE_VERSION="11.10.0" \
+     NPM_VERSION="6" \
      NPM_CONFIG_LOGLEVEL="info"
 
 RUN apk --no-cache upgrade --update && \
@@ -40,7 +40,7 @@ RUN apk --no-cache upgrade --update && \
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-node"="3.8"
+LABEL "ormos.alpine-node"="3.9"
 
 RUN apk --no-cache upgrade --update && \
     apk --no-cache add --quiet ca-certificates libstdc++

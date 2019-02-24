@@ -1,0 +1,2 @@
+TAGS='ormos/alpine-java-13-openjdk:3.9 ormos/alpine-java-13-openjdk:latest'
+PUSH_IMAGE='true'

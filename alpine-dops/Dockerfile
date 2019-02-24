@@ -1,12 +1,13 @@
 FROM ormos/alpine
 
 LABEL maintainer="ormos <r.hofmann@sap.com>"
-LABEL "ormos.alpine-dops"="3.8"
+LABEL "ormos.alpine-dops"="3.9"
 
 ENV WORK_FOLDER="/dops"
 
 RUN INSTALLATION_BASE="/usr/local" && \
     \
+    DOCKER_MACHINE_VERSION="0.16.1" && \
     DOCKER_MACHINE_PACKAGE_FILENAME="docker-machine-$(uname -s)-$(uname -m)" && \
     DOCKER_MACHINE_PROGRAM_FILENAME="docker-machine" && \
     DOCKER_MACHINE_BASE_URL="https://github.com/docker/machine/releases/download/v${DOCKER_MACHINE_VERSION}" && \
