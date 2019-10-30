@@ -30,7 +30,7 @@
   "dependencies": {
 	  "compression": "~1.7.3",
     "express": "~4.16.3",
-	  "open": "~0.0.5",
+	  "open": "~7.0.0",
 	  "serve-index": "~1.9.1"
   },
   "readmeFilename": "README.md",
